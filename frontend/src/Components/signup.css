@@ -1,0 +1,19 @@
+.login span{
+    text-decoration: none;
+    font-weight: 700;
+    color: #000;
+    transition: .5s;
+    cursor: pointer;
+
+}
+
+.login span:hover {
+    text-decoration: underline;
+    color: #000;
+}
+
+.login {
+    text-align: center;
+    margin-top: 25px;
+    font-size: small;
+}
