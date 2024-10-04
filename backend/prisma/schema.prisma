@@ -14,20 +14,26 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+}
 model User {
-  id         Int       @id @default(autoincrement())
-  firstName  String
-  lastName   String
-  email      String    @unique
-  password   String
-  role       Role
-  speciality String?  
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id                Int       @id @default(autoincrement())
+  firstName         String
+  lastName          String
+  email             String    @unique
+  password          String
+  role              Role
+  speciality        String?  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
-  trainingsAssigned  Training[]          @relation("TrainerRelation")
-  assignedTrainings  TrainingAssignment[]
-  scores             Score[]             @relation("EmployeeScores")
+  trainingsAssigned Training[]          @relation("TrainerRelation")
+  assignedTrainings TrainingAssignment[]
+  scores            Score[]             @relation("EmployeeScores")
+
+  // Only keep this for tracking trainers
+  isTrainerAssigned Boolean  @default(false) // Indicates if the trainer is assigned to any training
 }
 
 model Training {
@@ -39,12 +45,12 @@ model Training {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  trainerId   Int
-  trainer     User       @relation("TrainerRelation", fields: [trainerId], references: [id])
+  trainerId   Int?
+  trainer     User?       @relation("TrainerRelation", fields: [trainerId], references: [id])
 
   assignedEmployees TrainingAssignment[]
 
-  scores    Score[]  
+  scores      Score[]  
 }
 
 model PerformanceMetrics {
@@ -55,6 +61,8 @@ model PerformanceMetrics {
   updatedAt   DateTime @updatedAt
 
   scores Score[]
+
+  CurrentValue Int?  @default(0)
 }
 
 model Score {
@@ -85,6 +93,7 @@ model TrainingAssignment {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  isAssigned   Boolean  @default(true) // Tracks if the employee is currently assigned to this training
   @@unique([employeeId, trainingId]) 
 }
 
