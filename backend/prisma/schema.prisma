@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+
+
+model User {
+  id         Int       @id @default(autoincrement())
+  firstName  String
+  lastName   String
+  email      String    @unique
+  password   String
+  role       Role      // Enum to specify if the user is ADMIN, TRAINER, or EMPLOYEE
+  speciality String?   // Only for trainers
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // Relationships
+  trainingsAssigned  Training[]          @relation("trainer")
+  assignedTrainings  TrainingAssignment[] // Trainings assigned to employees
+  
+  @@map("users")  // Rename the table to users in the database
+}
+
+model Training {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relationship with Trainer (User)
+  trainerId Int
+  trainer   User       @relation(fields: [trainerId], references: [id]) @relation("trainer")
+
+  // Relationship with employees
+  assignedEmployees TrainingAssignment[] // Many-to-many relationship with employees
+
+  // Relationship with scores
+  scores    Score[]   // Tracks scores for this training
+
+  @@map("trainings") // Rename the table to trainings in the database
+}
+
+model PerformanceMetrics {
+  id          Int      @id @default(autoincrement())
+  name        String   // Name of the metric (e.g., Full Stack, Data Engineering, etc.)
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Tracks scores for metrics
+  scores Score[] @relation("metricScore")
+
+  @@map("performance_metrics")
+}
+
+model Score {
+  id             Int      @id @default(autoincrement())
+  value          Int
+  threshold1     Int      // First threshold for updating job performance
+  threshold2     Int      // Second threshold for updating job performance
+  performanceInc1 Int     // Increase in metric if score is above threshold1
+  performanceInc2 Int     // Increase in metric if score is above threshold2
+  employeeId     Int      // Employee who gets the score
+  employee       User     @relation(fields: [employeeId], references: [id])
+  trainingId     Int      // For which training the score is given
+  training       Training @relation(fields: [trainingId], references: [id])
+  metricId       Int      // For which performance metric
+  metric         PerformanceMetrics @relation(fields: [metricId], references: [id]) @relation("metricScore")
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("scores")
+}
+
+model TrainingAssignment {
+  id           Int      @id @default(autoincrement())
+  employeeId   Int      // Employee who is assigned to training
+  employee     User     @relation(fields: [employeeId], references: [id])
+  trainingId   Int      // Training that is assigned to the employee
+  training     Training @relation(fields: [trainingId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([employeeId, trainingId]) // One employee can be assigned to only one training at a time
+  @@map("training_assignments")
+}
+
+enum Role {
+  ADMIN
+  TRAINER
+  EMPLOYEE
+}
