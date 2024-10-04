@@ -14,24 +14,20 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-
-
 model User {
   id         Int       @id @default(autoincrement())
   firstName  String
   lastName   String
   email      String    @unique
   password   String
-  role       Role      // Enum to specify if the user is ADMIN, TRAINER, or EMPLOYEE
-  speciality String?   // Only for trainers
+  role       Role
+  speciality String?  
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 
-  // Relationships
-  trainingsAssigned  Training[]          @relation("trainer")
-  assignedTrainings  TrainingAssignment[] // Trainings assigned to employees
-  
-  @@map("users")  // Rename the table to users in the database
+  trainingsAssigned  Training[]          @relation("TrainerRelation")
+  assignedTrainings  TrainingAssignment[]
+  scores             Score[]             @relation("EmployeeScores")
 }
 
 model Training {
@@ -43,63 +39,53 @@ model Training {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  // Relationship with Trainer (User)
-  trainerId Int
-  trainer   User       @relation(fields: [trainerId], references: [id]) @relation("trainer")
+  trainerId   Int
+  trainer     User       @relation("TrainerRelation", fields: [trainerId], references: [id])
 
-  // Relationship with employees
-  assignedEmployees TrainingAssignment[] // Many-to-many relationship with employees
+  assignedEmployees TrainingAssignment[]
 
-  // Relationship with scores
-  scores    Score[]   // Tracks scores for this training
-
-  @@map("trainings") // Rename the table to trainings in the database
+  scores    Score[]  
 }
 
 model PerformanceMetrics {
   id          Int      @id @default(autoincrement())
-  name        String   // Name of the metric (e.g., Full Stack, Data Engineering, etc.)
+  name        String
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  // Tracks scores for metrics
-  scores Score[] @relation("metricScore")
-
-  @@map("performance_metrics")
+  scores Score[]
 }
 
 model Score {
   id             Int      @id @default(autoincrement())
   value          Int
-  threshold1     Int      // First threshold for updating job performance
-  threshold2     Int      // Second threshold for updating job performance
-  performanceInc1 Int     // Increase in metric if score is above threshold1
-  performanceInc2 Int     // Increase in metric if score is above threshold2
-  employeeId     Int      // Employee who gets the score
-  employee       User     @relation(fields: [employeeId], references: [id])
-  trainingId     Int      // For which training the score is given
+  threshold1     Int      
+  threshold2     Int      
+  performanceInc1 Int     
+  performanceInc2 Int     
+  employeeId     Int      
+  
+  employee       User     @relation("EmployeeScores", fields: [employeeId], references: [id])
+  trainingId     Int      
   training       Training @relation(fields: [trainingId], references: [id])
-  metricId       Int      // For which performance metric
-  metric         PerformanceMetrics @relation(fields: [metricId], references: [id]) @relation("metricScore")
+  metricId       Int      
+  metric         PerformanceMetrics @relation(fields: [metricId], references: [id])
 
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-
-  @@map("scores")
 }
 
 model TrainingAssignment {
   id           Int      @id @default(autoincrement())
-  employeeId   Int      // Employee who is assigned to training
+  employeeId   Int      
   employee     User     @relation(fields: [employeeId], references: [id])
-  trainingId   Int      // Training that is assigned to the employee
+  trainingId   Int      
   training     Training @relation(fields: [trainingId], references: [id])
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  @@unique([employeeId, trainingId]) // One employee can be assigned to only one training at a time
-  @@map("training_assignments")
+  @@unique([employeeId, trainingId]) 
 }
 
 enum Role {
