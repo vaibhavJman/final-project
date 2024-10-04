@@ -4,13 +4,6 @@ const bcrypt = require('bcrypt');
 
 const prisma = new PrismaClient();
 
-function getRandomDate(startDate, endDate) {
-  const startTimestamp = startDate.getTime();
-  const endTimestamp = endDate.getTime();
-  const randomTimestamp = Math.random() * (endTimestamp - startTimestamp) + startTimestamp;
-  return new Date(randomTimestamp);
-}
-
 async function main() {
   console.log("Starting the seeding process...");
 
@@ -85,109 +78,46 @@ async function main() {
   }
   await prisma.user.createMany({ data: employeeData });
 
-  // 5. Create job performance metrics with initial value 0
+  // 5. Create performance metrics
   console.log("Creating performance metrics...");
-  const performanceMetrics = ['Full Stack', 'Data Engineering', 'Data Science', 'Problem Solving', 'Leadership'];
-  const metricData = performanceMetrics.map(metric => ({
-    name: metric,
-    description: `${metric} performance evaluation`,
-    CurrentValue: faker.number.int({ min: 0, max: 5 }), // Initialize with a random value between 0-5
-  }));
-  await prisma.performanceMetrics.createMany({ data: metricData });
+  const performanceMetrics = [
+    {
+      name: 'Code Quality',
+      description: 'Evaluation of code quality based on standards and best practices',
+      currentValue: 0,
+    },
+    {
+      name: 'Full Stack Development',
+      description: 'Assessment of skills in both frontend and backend development',
+      currentValue: 0,
+    },
+    {
+      name: 'Data Engineering',
+      description: 'Evaluation of skills related to data processing and architecture',
+      currentValue: 0,
+    },
+    {
+      name: 'Problem Solving',
+      description: 'Measurement of the ability to analyze and solve problems effectively',
+      currentValue: 0,
+    },
+    {
+      name: 'Leadership',
+      description: 'Assessment of leadership skills and the ability to manage teams',
+      currentValue: 0,
+    },
+  ];
 
-  // 6. Create trainings based on the performance metrics
-  console.log("Creating trainings...");
-  const metrics = await prisma.performanceMetrics.findMany(); // Retrieve all performance metrics
-  const today = new Date(); // Today's date
-  const startDateLimit = new Date('2023-12-01'); // Start date limit
-  const trainingData = [];
+  await prisma.performanceMetrics.createMany({
+    data: performanceMetrics.map(metric => ({
+      name: metric.name,
+      description: metric.description,
+      CurrentValue: metric.currentValue,
+    })),
+  });
 
-  for (const metric of metrics) {
-    const startDate = getRandomDate(startDateLimit, today); // Random start date
-    const endDate = getRandomDate(startDate, today); // Random end date after start date
-
-    trainingData.push({
-      name: `${metric.name} Training`,
-      description: `Training for improving ${metric.name}`,
-      startDate: startDate,
-      endDate: endDate,
-      trainerId: await getRandomTrainerId(), // Assign a random trainer
-    });
-  }
-  await prisma.training.createMany({ data: trainingData });
-
-  // 7. Assign employees to trainings and generate scores
-  console.log("Assigning employees to trainings and creating scores...");
-  const assignedTrainings = new Set();
-  const employees = await prisma.user.findMany({ where: { role: 'EMPLOYEE' } });
-  const trainings = await prisma.training.findMany(); // Retrieve all trainings
-  const metricsForScores = await prisma.performanceMetrics.findMany(); // Retrieve all performance metrics for score assignment
-
-  const scoreData = [];
-
-  for (const employee of employees) {
-    // Randomly decide if the employee will be assigned to training
-    const willBeAssigned = Math.random() < 0.7; // 70% chance to be assigned to a training
-    if (willBeAssigned) {
-      const trainingCount = faker.number.int({ min: 1, max: 3 }); // Limit number of trainings per employee (1 to 3)
-      for (let i = 0; i < trainingCount; i++) {
-        let training = trainings[Math.floor(Math.random() * trainings.length)];
-
-        // Ensure unique (employeeId, trainingId) pair
-        while (assignedTrainings.has(`${employee.id}-${training.id}`)) {
-          training = trainings[Math.floor(Math.random() * trainings.length)];
-        }
-
-        assignedTrainings.add(`${employee.id}-${training.id}`);
-
-        const scoreValue = faker.number.int({ min: 0, max: 5 }); // Performance metrics in the range of 0-5
-
-        // Create the training assignment
-        await prisma.trainingAssignment.create({
-          data: {
-            employeeId: employee.id,
-            trainingId: training.id,
-            isAssigned: i === trainingCount - 1, // Mark the last one as the current training
-          },
-        });
-
-        // Create the scores for each performance metric
-        for (const metric of metricsForScores) {
-          const performanceIncrease = scoreValue > 3 ? 1 : 0; // Adjust thresholds as needed
-          scoreData.push({
-            value: scoreValue,
-            threshold1: 2,
-            threshold2: 4,
-            performanceInc1: 1,
-            performanceInc2: 2,
-            employeeId: employee.id,
-            trainingId: training.id,
-            metricId: metric.id,
-          });
-
-          // Update the performance metrics, but limit the increment
-          await prisma.performanceMetrics.update({
-            where: { id: metric.id },
-            data: {
-              CurrentValue: {
-                increment: Math.min(performanceIncrease, 5 - (await prisma.performanceMetrics.findUnique({ where: { id: metric.id } })).CurrentValue),
-              },
-            },
-          });
-        }
-      }
-    } 
-  }
-  await prisma.score.createMany({ data: scoreData }); // Bulk create scores
-
+  console.log("Performance metrics seeded successfully.");
   console.log("Seeding completed successfully.");
-}
-
-// Helper function to get a random trainer ID
-async function getRandomTrainerId() {
-  const trainers = await prisma.user.findMany({ where: { role: 'TRAINER' } });
-  const randomIndex = Math.floor(Math.random() * trainers.length);
-  return trainers[randomIndex].id;
 }
 
 main()
