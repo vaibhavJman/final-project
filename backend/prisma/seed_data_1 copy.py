@@ -107,11 +107,10 @@ async def create_trainings():
         start_date, end_date = generate_training_dates()
         training_data.append({
             'name': metric.name + ' Training',
-            'description': f"This training focuses on {metric.name} skills and knowledge.",
             'startDate': start_date,
             'endDate': end_date,
             'trainerId': None,  # Placeholder for later assignment
-            # Do not include performanceMetricId here
+            'performance_metric_id': metric.id  # Ensure this is linked to the performance metric
         })
 
     await prisma.training.create_many(data=training_data)
@@ -170,7 +169,7 @@ async def update_performance_metrics():
         employee_metrics = await prisma.employeeperformancemetric.find_first(
             where={
                 'employeeId': assignment.employeeId,
-                'metricId': assignment.training.performance_metric_id  # Make sure this field exists in the metric
+                'metricId': assignment.training.performance_metric_id
             }
         )
 
@@ -197,13 +196,13 @@ async def seed_data():
     
     await clear_data()
 
-    await create_admins()
-    await create_trainers()
-    await create_employees()
-    
-    # Ensure performance metrics are created before trainings
-    await create_performance_metrics()
-    await create_trainings()
+    await asyncio.gather(
+        create_admins(),
+        create_trainers(),
+        create_employees(),
+        create_performance_metrics(),
+        create_trainings()
+    )
 
     await assign_trainers_to_trainings()
     await assign_trainings_to_employees()
