@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// This is your Prisma schema file.
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -17,6 +14,7 @@ datasource db {
 generator erd {
   provider = "prisma-erd-generator"
 }
+
 model User {
   id                Int       @id @default(autoincrement())
   firstName         String
@@ -24,56 +22,37 @@ model User {
   email             String    @unique
   password          String
   role              Role
-  speciality        String?  
+  specialty         String?  
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
   trainingsAssigned Training[]          @relation("TrainerRelation")
   assignedTrainings TrainingAssignment[]
   scores            Score[]             @relation("EmployeeScores")
-
-  // Only keep this for tracking trainers
-  isTrainerAssigned Boolean  @default(false) // Indicates if the trainer is assigned to any training
+  employeePerformances EmployeePerformanceMetric[]
 }
 
-model Training {
-  id          Int       @id @default(autoincrement())
-  name        String
-  description String?
-  startDate   DateTime
-  endDate     DateTime
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  trainerId   Int?
-  trainer     User?       @relation("TrainerRelation", fields: [trainerId], references: [id])
-
-  assignedEmployees TrainingAssignment[]
-
-  scores      Score[]  
-}
 
 model PerformanceMetrics {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              Int      @id @default(autoincrement())
+  name            String
+  description     String?
+  threshold1      Int
+  threshold2      Int
+  performanceInc1 Int
+  performanceInc2 Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  scores Score[]
-
-  CurrentValue Int?  @default(0)
+  scores          Score[]
+  employeePerformances EmployeePerformanceMetric[]
 }
+
 
 model Score {
   id             Int      @id @default(autoincrement())
   value          Int
-  threshold1     Int      
-  threshold2     Int      
-  performanceInc1 Int     
-  performanceInc2 Int     
   employeeId     Int      
-  
   employee       User     @relation("EmployeeScores", fields: [employeeId], references: [id])
   trainingId     Int      
   training       Training @relation(fields: [trainingId], references: [id])
@@ -84,21 +63,47 @@ model Score {
   updatedAt      DateTime @updatedAt
 }
 
-model TrainingAssignment {
-  id           Int      @id @default(autoincrement())
-  employeeId   Int      
-  employee     User     @relation(fields: [employeeId], references: [id])
-  trainingId   Int      
-  training     Training @relation(fields: [trainingId], references: [id])
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
 
-  isAssigned   Boolean  @default(true) // Tracks if the employee is currently assigned to this training
-  @@unique([employeeId, trainingId]) 
+model EmployeePerformanceMetric {
+  id               Int      @id @default(autoincrement())
+  employeeId       Int
+  employee         User     @relation(fields: [employeeId], references: [id])
+  metricId         Int
+  metric           PerformanceMetrics @relation(fields: [metricId], references: [id])
+  currentValue     Int     @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([employeeId, metricId])
 }
 
-enum Role {
-  ADMIN
-  TRAINER
-  EMPLOYEE
+model Training {
+  id                Int             @id @default(autoincrement())
+  name              String
+  description       String?
+  startDate         DateTime
+  endDate           DateTime
+  status            TrainingStatus  @default(IN_PROGRESS)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  trainerId         Int?
+  trainer           User?           @relation("TrainerRelation", fields: [trainerId], references: [id])
+
+  assignedEmployees TrainingAssignment[]
+  scores            Score[]  
+}
+
+
+model TrainingAssignment {
+  id           Int               @id @default(autoincrement())
+  employeeId   Int      
+  employee     User              @relation(fields: [employeeId], references: [id])
+  trainingId   Int      
+  training     Training          @relation(fields: [trainingId], references: [id])
+  status       AssignmentStatus  @default(ASSIGNED)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@unique([employeeId, trainingId]) 
 }
