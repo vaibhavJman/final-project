@@ -66,18 +66,25 @@ async def create_trainers():
 
 # Create Employees
 async def create_employees():
-    employee_data = [
-        {
+    employee_data = []
+    
+    for _ in range(100):
+        employee_data.append({
             'firstName': faker.first_name(),
             'lastName': faker.last_name(),
             'email': generate_email(faker.first_name(), faker.last_name()),
             'password': hash_password('EmployeePass123'),
             'role': 'EMPLOYEE',
             'isTrainerAssigned': False
-        } for _ in range(100)
-    ]
-    await prisma.user.create_many(data=employee_data)
-    print(f"Created {len(employee_data)} employees.")
+        })
+        if len(employee_data) == 50:  # Create in batches
+            await prisma.user.create_many(data=employee_data)
+            print(f"Created employees {len(employee_data) * _ + 1} to {len(employee_data) * (_ + 1)}.")
+            employee_data = []  # Reset for next batch
+    # Handle the remaining employees, if any
+    if employee_data:
+        await prisma.user.create_many(data=employee_data)
+        print(f"Created employees {len(employee_data) * 2 + 1} to {len(employee_data) * 2 + len(employee_data)}.")
 
 # Create Job Performance Metrics
 async def create_performance_metrics():
@@ -86,7 +93,7 @@ async def create_performance_metrics():
     metric_data = [
         {
             'name': metric,
-            'threshold': 3,
+            'threshold': 50,
             'increment': 1
         } for metric in metrics
     ]
@@ -107,10 +114,10 @@ async def create_trainings():
         start_date, end_date = generate_training_dates()
         training_data.append({
             'name': metric.name + ' Training',
+            'description': f"This training focuses on {metric.name} skills and knowledge.",
             'startDate': start_date,
             'endDate': end_date,
             'trainerId': None,  # Placeholder for later assignment
-            'performance_metric_id': metric.id  # Ensure this is linked to the performance metric
         })
 
     await prisma.training.create_many(data=training_data)
@@ -146,48 +153,69 @@ async def assign_trainings_to_employees():
         return
 
     tasks = []
-    for employee in employees:
-        assigned_trainings = random.sample(trainings, k=min(3, len(trainings)))  # Assign 3 random trainings or less if not enough
-        for training in assigned_trainings:
-            tasks.append(prisma.trainingassignment.create(
-                data={
-                    'employeeId': employee.id,
-                    'trainingId': training.id,
-                    'createdAt': datetime.now(),
-                    'updatedAt': datetime.now(),
-                }
-            ))
-    await asyncio.gather(*tasks)
+    semaphore = asyncio.Semaphore(5)  # Limit concurrent tasks
+
+    async def assign_training(employee):
+        async with semaphore:
+            assigned_trainings = random.sample(trainings, k=min(3, len(trainings)))  # Assign 3 random trainings
+            for training in assigned_trainings:
+                await prisma.trainingassignment.create(
+                    data={
+                        'employeeId': employee.id,
+                        'trainingId': training.id,
+                        'createdAt': datetime.now(),
+                        'updatedAt': datetime.now(),
+                    }
+                )
+            await asyncio.sleep(0.1)  # Small delay to prevent overwhelming the database
+
+    await asyncio.gather(*(assign_training(employee) for employee in employees))
     print(f"Assigned trainings to {len(employees)} employees.")
 
 # Update Performance Metrics Based on Training Scores
 async def update_performance_metrics():
     training_assignments = await prisma.trainingassignment.find_many(include={'employee': True, 'training': True})
-    
+
     tasks = []
     for assignment in training_assignments:
-        employee_metrics = await prisma.employeeperformancemetric.find_first(
+        # Retrieve the scores associated with the training assignment
+        scores = await prisma.score.find_many(
             where={
-                'employeeId': assignment.employeeId,
-                'metricId': assignment.training.performance_metric_id
+                'trainingId': assignment.trainingId,
+                'employeeId': assignment.employeeId
             }
         )
 
-        if employee_metrics:
-            new_value = employee_metrics.currentValue
-            if assignment.score > 50:
-                new_value += 1
-            if assignment.score > 70:
-                new_value += 2
-            
-            new_value = min(new_value, 5)  # Ensure new value does not exceed threshold
-            tasks.append(prisma.employeeperformancemetric.update(
-                where={'id': employee_metrics.id},
-                data={'currentValue': new_value}
-            ))
-    
+        for score in scores:
+            # Access the associated metric
+            metric = await prisma.performancemetrics.find_unique(where={'id': score.metricId})
+
+            if metric:
+                new_value = 0  # Start from 0 for new value
+                
+                if score.value > metric.threshold:
+                    new_value += metric.increment
+
+                # Update the EmployeePerformanceMetric for the employee and metric
+                employee_metrics = await prisma.employeeperformancemetric.find_first(
+                    where={
+                        'employeeId': assignment.employeeId,
+                        'metricId': metric.id
+                    }
+                )
+
+                if employee_metrics:
+                    # Update the current value, ensuring it doesn't exceed a certain limit
+                    new_value = min(employee_metrics.currentValue + new_value, metric.threshold)  
+                    
+                    tasks.append(prisma.employeeperformancemetric.update(
+                        where={'id': employee_metrics.id},
+                        data={'currentValue': new_value}
+                    ))
+
     await asyncio.gather(*tasks)
     print(f"Updated performance metrics based on training scores.")
+
 
 # Seed the data
 async def seed_data():
@@ -196,13 +224,13 @@ async def seed_data():
     
     await clear_data()
 
-    await asyncio.gather(
-        create_admins(),
-        create_trainers(),
-        create_employees(),
-        create_performance_metrics(),
-        create_trainings()
-    )
+    await create_admins()
+    await create_trainers()
+    await create_employees()
+    
+    # Ensure performance metrics are created before trainings
+    await create_performance_metrics()
+    await create_trainings()
 
     await assign_trainers_to_trainings()
     await assign_trainings_to_employees()
