@@ -2,13 +2,16 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
+
 const prisma = new PrismaClient();
 
 // Register a new user
 const registerUser = async (req, res) => {
+
   const { firstName, lastName, email, password, role } = req.body;
 
   const existingUser = await prisma.user.findUnique({ where: { email } });
+
   if (existingUser) {
     return res.status(400).json({ message: "User already exists" });
   }
@@ -31,7 +34,7 @@ const registerUser = async (req, res) => {
 // User login
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
-
+console.log(req.body)
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
     return res.status(404).json({ message: "User not found" });

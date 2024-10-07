@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
+import axios from "axios";
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -9,22 +11,43 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-
-    const storedUser = users.find(
-      (user) => user.email === email && user.password === password
-    );
-    if (storedUser) {
-      // Set session status
-      sessionStorage.setItem("sessionStatus", "active");
-      sessionStorage.setItem("userEmail", email); // Store user email
-
-      navigate("/welcome");
-    } else {
-      setError("Invalid email or password");
+  
+    try {
+      // Make an API call to the backend for login
+      const response = await axios.post("http://localhost:5000/api/user/login", {
+        email,
+        password,
+      });
+  
+      // If login is successful, get the token and user from the response
+      const { token, user } = response.data;
+  
+      // Store the token in localStorage or sessionStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("userRole", user.role); // Store user role for future access
+  
+      // Redirect based on user role
+      switch (user.role) {
+        case "ADMIN":
+          navigate("/welcome"); // Redirect to admin dashboard
+          break;
+        case "TRAINER":
+          navigate("/trainer/dashboard"); // Redirect to trainer dashboard
+          break;
+        case "EMPLOYEE":
+          navigate("/employee/dashboard"); // Redirect to employee dashboard
+          break;
+        default:
+          navigate("/welcome"); // Default redirect
+      }
+    } catch (err) {
+      if (err.response && err.response.data.message) {
+        setError(err.response.data.message); // Show error from backend
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
     }
   };
 

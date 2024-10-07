@@ -2,39 +2,46 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./signup.css";
-
+import axios from "axios";
 const Signup = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("EMPLOYEE"); // Set default role
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
 
-    if (!email || !password) {
-      setError("Please enter both email and password");
-      return;
+    try {
+      // Make the API call to register the user
+      const response = await axios.post("http://localhost:5000/api/user/register", {
+        firstName,
+        lastName,
+        email,
+        password,
+        role // You can change this role based on the form data if needed
+      });
+
+      if (response.status === 201) {
+        console.log("User registered successfully", response.data);
+        navigate("/login"); // Redirect to login on successful registration
+      }
+    } catch (err) {
+      if (err.response && err.response.data.message) {
+        setError(err.response.data.message); // Show error from backend
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
     }
 
-    const users = JSON.parse(localStorage.getItem("users")) || [];
 
-    const existingUser = users.find((user) => user.email === email);
-    if (existingUser) {
-      setError("User already exists. Please login.");
-      return;
-    }
 
-    users.push({ email, password });
 
-    // Store updated user list in localStorage
-    localStorage.setItem("users", JSON.stringify(users));
 
-    // Set session status
-    sessionStorage.setItem("sessionStatus", "active");
-    sessionStorage.setItem("userEmail", email); // Store user email
-
-    navigate("/login");
+    // navigate("/login");
   };
 
   return (
@@ -54,6 +61,25 @@ const Signup = () => {
             <div className="input-box">
               <header>Sign Up</header>
               <div>
+                <label>First Name:</label>
+                <input
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label>Last Name:</label>
+                <input
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div>
                 <label>Email:</label>
                 <input
                   type="email"
@@ -71,8 +97,22 @@ const Signup = () => {
                   required
                 />
               </div>
+
+              <div>
+                <label>Role:</label>
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  required
+                >
+                  <option value="ADMIN">Admin</option>
+                  <option value="TRAINER">Trainer</option>
+                  <option value="EMPLOYEE">Employee</option>
+                </select>
+              </div>
+
               {error && <p style={{ color: "red" }}>{error}</p>}
-              <button className="submit" type="submit">Signup</button>
+              <button className="submit" type="submit" >Signup</button>
 
               <div className="login">
                 <p>
