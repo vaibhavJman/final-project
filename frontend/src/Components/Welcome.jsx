@@ -69,10 +69,10 @@ export default function Dashboard() {
   ];
 
   const jobPerformanceMetrics = [
-    { metric: "Data Engineering", score: 4 },
-    { metric: "Data Science", score: 3 },
-    { metric: "Full Stack", score: 4 },
-    { metric: "Problem Solving", score: 4 },
+    { metric: "DataEngineering", score: 4 },
+    { metric: "DataScience", score: 3 },
+    { metric: "FullStack", score: 4 },
+    { metric: "ProblemSolving", score: 4 },
     { metric: "Leadership", score: 5 },
   ];
 
@@ -174,6 +174,7 @@ export default function Dashboard() {
       ProblemSolving: 3,
     },
   ];
+
   const employees = [
     {
       id: 1,
@@ -237,10 +238,10 @@ export default function Dashboard() {
         return "#da88dc";
       case "FullStack":
         return "#b786e0";
-      case "Leadership":
-        return "#9385e3";
       case "ProblemSolving":
         return "#7084e7";
+      case "Leadership":
+        return "#9385e3";
       default:
         return "#000"; // fallback to black if name doesn't match
     }
@@ -249,29 +250,27 @@ export default function Dashboard() {
   const COLORS = ["#fe89d8", "#da88dc", "#b786e0", "#9385e3", "#7084e7"];
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
+      // console.log(payload)
+      const metricColor = getColor(payload[0].name); // Get the color for the corresponding metric
       return (
         <div className="bg-gray-800 text-white rounded-lg p-2">
-          {payload.map((item) => (
-            <div key={item.name} className="flex items-center">
-              <span
-                className="w-3 h-3 rounded-full"
-                style={{
-                  backgroundColor: getColor(item.payload.metric), // Change item.name to item.payload.metric
-                  marginRight: "8px",
-                }}
-              ></span>
-              <span style={{ marginRight: "30px" }}>
-                {item.name}:
-              </span>
-              <span className="ml-auto">{item.value}</span>
-            </div>
-          ))}
+          <div className="flex items-center">
+            <span
+              className="w-3 h-3 rounded-full"
+              style={{
+                backgroundColor: metricColor,
+                marginRight: "8px",
+              }}
+            ></span>
+            <label>{`${payload[0].name} : ${payload[0].value}%`}</label>
+            {/* <span style={{ marginRight: "30px" }}>{payload[0].name}:</span>
+            <span className="ml-auto">{payload[0].value}</span> */}
+          </div>
         </div>
       );
     }
     return null;
   };
-  
 
   const topEmployees = employees.sort((a, b) => b.score - a.score).slice(0, 5); // Get the top 5 employees by score
 
@@ -460,7 +459,6 @@ export default function Dashboard() {
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
                   <PieChart>
-                    <Tooltip content={<CustomTooltip />} />
                     <Pie
                       data={jobPerformanceMetrics}
                       dataKey="score"
@@ -471,11 +469,12 @@ export default function Dashboard() {
                     >
                       {jobPerformanceMetrics.map((entry, index) => (
                         <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
                         />
                       ))}
                     </Pie>
+                    <Tooltip content={<CustomTooltip />} />
                     <Legend
                       layout="vertical"
                       verticalAlign="middle"
