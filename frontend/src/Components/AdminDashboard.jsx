@@ -5,11 +5,6 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-  Radar,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
   BarChart,
   Bar,
   Legend,
@@ -18,15 +13,11 @@ import {
   Cell,
 } from "recharts";
 
-import {
-  Bell,
-  ChevronRight,
-  Layout,
-  Users,
-  BarChart as BarChartIcon,
-  FileText,
-  Settings,
-} from "lucide-react";
+import Sidebar from "./Sidebar";
+
+import { IoMdSettings } from "react-icons/io";
+import { FaBell } from "react-icons/fa";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -262,9 +253,9 @@ export default function Dashboard() {
                 marginRight: "8px",
               }}
             ></span>
-            <label>{`${payload[0].name} : ${payload[0].value}%`}</label>
-            {/* <span style={{ marginRight: "30px" }}>{payload[0].name}:</span>
-            <span className="ml-auto">{payload[0].value}</span> */}
+            {/* <label>{`${payload[0].name} : ${payload[0].value}%`}</label> */}
+            <span style={{ marginRight: "30px" }}>{payload[0].name}:</span>
+            <span className="ml-auto">{payload[0].value}</span>
           </div>
         </div>
       );
@@ -276,14 +267,14 @@ export default function Dashboard() {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      <aside className="hidden md:flex flex-col w-64 bg-white border-r">
+      {/* <aside className="hidden md:flex flex-col w-64 bg-white border-r">
         <div className="flex items-center justify-center h-16 border-b">
           <h1 className="text-xl font-semibold">PerformancePro</h1>
         </div>
         <nav className="flex-grow">
           {[
             { name: "Dashboard", icon: Layout },
-            { name: "Team", icon: Users },
+            { name: "Trainers", icon: Users },
             { name: "Score", icon: BarChartIcon },
             { name: "Performance", icon: FileText },
           ].map((item) => (
@@ -294,24 +285,31 @@ export default function Dashboard() {
                   ? "bg-purple-200"
                   : "hover:bg-purple-100"
               }`}
-              onClick={() => setActiveNav(item.name.toLowerCase())}
+              onClick={() => {
+                setActiveNav(item.name.toLowerCase());
+                if (item.name === "Trainers") {
+                  window.location.href = "/trainers"; // Redirect to trainers page
+                }
+              }}
             >
               <item.icon className="w-5 h-5 mr-3 fill-current " />{" "}
               {/* Ensure the icon is filled */}
-              {item.name}
+              {/* {item.name}
               <ChevronRight className="ml-auto" /> {/* Add right chevron */}
               {/* {item.name} */}
-            </button>
+            {/* </button>
           ))}
         </nav>
-      </aside>
+      </aside> */} 
+
+<Sidebar activeNav={activeNav} setActiveNav={setActiveNav} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="flex items-center justify-between px-6 py-4 bg-white border-b">
           <h2 className="text-xl font-semibold">Admin Dashboard</h2>
           <div className="flex items-center">
             <Button variant="ghost" size="icon">
-              <Bell className="h-5 w-5" />
+              <FaBell className="h-5 w-5" />
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger>
@@ -327,7 +325,7 @@ export default function Dashboard() {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => console.log("View Profile")}>
-                  <Settings className="mr-2" />
+                  <IoMdSettings className="mr-2" />
                   Settings
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout}>
@@ -368,9 +366,10 @@ export default function Dashboard() {
           {/* KPI Cards */}
           <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
             {[
-              { title: "Performance Score", value: "92%", change: "+5%" },
-              { title: "Tasks Completed", value: "28", change: "+3" },
-              { title: "Team Ranking", value: "3rd", change: "+2" },
+              { title: "Average Scores", value: "92%", change: "+5%" },
+              { title: "Total Employees", value: "28", change: "+3" },
+              { title: "Total Trainers", value: "3rd", change: "+2" },
+              { title: "Goals Achieved", value: "8/10", change: "+1" },
               { title: "Goals Achieved", value: "8/10", change: "+1" },
             ].map((kpi, index) => (
               <Card key={index}>
@@ -391,6 +390,8 @@ export default function Dashboard() {
 
           {/* Charts Section */}
           <div className="flex gap-8 mb-8">
+
+
             {/* <Card className="col-span-1 md:col-span-3 w-2/3">
               <CardHeader>
                 <CardTitle>Employees Performance Overtime</CardTitle>
@@ -421,12 +422,19 @@ export default function Dashboard() {
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
                   <BarChart data={topEmployees}>
+                  <defs>
+                      <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#fe89d8" stopOpacity={1} />
+                        <stop offset="100%" stopColor="#7084e7" stopOpacity={1} />
+                      </linearGradient>
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="fullName" />
                     <YAxis domain={[0, 100]} />
+                    {/* <Tooltip content={<CustomTooltip />} /> */}
                     <Tooltip />
-                    <Legend />
-                    <Bar dataKey="score" fill="#A855F7" />
+                    {/* <Legend /> */}
+                    <Bar dataKey="score" stroke="#A855F7" fill="url(#colorGradient)"  />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
