@@ -230,7 +230,6 @@ const Trainers = () => {
                   <TableHead className="font-bold text-center">Name</TableHead>
                   <TableHead className="font-bold text-center">Email</TableHead>
                   <TableHead className="font-bold text-center">Expertise</TableHead>
-                  <TableHead className="font-bold text-center">Assigned</TableHead>
                   <TableHead className="font-bold text-center">Training Name</TableHead>
                   <TableHead className="font-bold text-center">Actions</TableHead>
                 </TableRow>
@@ -249,9 +248,6 @@ const Trainers = () => {
                     </TableCell>
                     <TableCell className="text-center px-6 py-3 min-w-[150px]">
                       {trainer.expertise}
-                    </TableCell>
-                    <TableCell className="text-center px-6 py-3 min-w-[150px]">
-                      {trainer.trainingStatus}
                     </TableCell>
                     <TableCell className="text-center px-6 py-3 min-w-[150px]">
                       {trainer.trainingName}

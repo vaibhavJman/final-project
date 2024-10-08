@@ -125,3 +125,56 @@ const Score = () => {
 };
 
 export default Score;
+
+
+
+// <Card>
+// <CardHeader>
+//   <CardTitle>Employee Training Status</CardTitle>
+// </CardHeader>
+// <CardContent>
+//   <Table>
+//     {/* <TableCaption>A list of employees and their training status.</TableCaption> */}
+//     <TableHeader>
+//       <TableRow>
+//         <TableHead className="w-[200px] font-bold text-center ">
+//           Employee ID
+//         </TableHead>
+//         <TableHead className="font-bold text-center">
+//           Name
+//         </TableHead>
+//         <TableHead className="font-bold text-center">
+//           Email
+//         </TableHead>
+//         <TableHead className="font-bold text-center">
+//           Status
+//         </TableHead>
+//       </TableRow>
+//     </TableHeader>
+//     <TableBody>
+//       {employees.map((employee) => (
+//         <TableRow key={employee.id} className="h-[6vh]">
+//           <TableCell className="font-medium text-center  px-6 py-3 min-w-[120px]">
+//             {employee.id}
+//           </TableCell>
+//           <TableCell className="font-medium text-center px-6 py-3 min-w-[150px]">
+//             {employee.fullName}
+//           </TableCell>
+//           <TableCell className="text-center px-6 py-3 min-w-[150px]">
+//             {employee.email}
+//           </TableCell>
+//           <TableCell className="text-center  px-6 py-3 min-w-[150px]">
+//             <span
+//               className={`rounded-3xl px-4 py-2 ${getStatusClass(
+//                 employee.trainingStatus
+//               )}`}
+//             >
+//               {employee.trainingStatus}
+//             </span>
+//           </TableCell>
+//         </TableRow>
+//       ))}
+//     </TableBody>
+//   </Table>
+// </CardContent>
+// </Card>

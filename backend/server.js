@@ -11,9 +11,14 @@ app.use(express.json()); // Parse JSON bodies
 
 // Routes
 const userRoutes = require("./src/routes/userRoutes");
+// const employeeRoutes = require("./src/routes/employeeRoutes");
+const adminRoutes = require("./src/routes/adminRoutes");
+
 
 // Use Routes
 app.use("/api/user/", userRoutes);
+app.use("/api/admin/", adminRoutes); // Add this line
+
 
 app.get("/", (req, res) => {
   return res.status(200).json({

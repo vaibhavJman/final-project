@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+//generator erd {
+//  provider = "prisma-erd-generator"
+//}
+
+model User {
+  id                Int                     @id @default(autoincrement())
+  firstName         String
+  lastName          String
+  email             String                  @unique
+  password          String
+  role              Role                    // User can be ADMIN or TRAINER
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+
+  trainingsAssignedtoTrainers  Training[]              @relation("TrainerToTraining")
+  scoresGiven        Score[]                            @relation("TrainerScores")
+
+  assignedTrainings  TrainingAssignment[]     @relation("EmployeeTrainings")
+  scoresReceived     Score[]                 @relation("EmployeeScores")
+}
+
+model Training {
+  id                  Int                     @id @default(autoincrement())
+  name                String
+  startDate           DateTime
+  endDate             DateTime
+  domainId           Int                  // Foreign key to Domain
+  domain             Domain               @relation(fields: [domainId], references: [id])
+
+  trainer             User?                   @relation("TrainerToTraining", fields: [trainerId], references: [id])
+  trainerId           Int?
+
+  assignedEmployees    TrainingAssignment[]     // Employees assigned to this training
+  scores              Score[]                  // Scores for this training
+  
+}
+
+model Domain {
+  id          Int      @id @default(autoincrement())
+  name        DomainEnum  @unique // Domain enum (Data Engineering, Machine Learning, etc.)
+  trainingId  Int
+  training    Training @relation(fields: [trainingId], references: [id])
+  
+  @@unique([domain, trainingId]) // Ensure unique domain-training associations
+}
+
+model Score {
+  id          Int      @id @default(autoincrement())
+  value       Int
+  trainingId  Int
+  training    Training @relation(fields: [trainingId], references: [id])
+  
+  employeeId  Int
+  employee    User     @relation("EmployeeScores", fields: [employeeId], references: [id])
+  
+  trainerId   Int
+  trainer     User     @relation("TrainerScores", fields: [trainerId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model TrainingAssignment {
+  id          Int      @id @default(autoincrement())
+  employeeId  Int
+  employee    User     @relation("EmployeeTrainings", fields: [employeeId], references: [id])
+
+  trainingId  Int
+  training    Training @relation(fields: [trainingId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([employeeId, trainingId])  // Ensure unique assignments
+}
+
+enum Role {
+  ADMIN
+  TRAINER
+  EMPLOYEE
+}
+
+enum DomainEnum {
+  DATA_ENGINEERING
+  MACHINE_LEARNING
+  FULL_STACK
+  LEADERSHIP
+  OTHER
+}
