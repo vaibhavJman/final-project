@@ -21,122 +21,75 @@ datasource db {
 
 
 model User {
-  id                Int       @id @default(autoincrement())
-  firstName         String
-  lastName          String
-  email             String    @unique
-  password          String
-  role              Role
-  speciality        String?  
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id          Int       @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  email       String    @unique
+  password    String
+  role        Role      // User can be ADMIN or TRAINER
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  // Link users to their performance metrics
-  performanceMetrics EmployeePerformanceMetric[] @relation("UserPerformanceMetrics")
+  trainingsAssigned   Training[]          @relation("TrainerToTraining")
+  scoresGiven         Score[]             @relation("TrainerScores")
 
-  trainingsAssigned Training[]          @relation("TrainerRelation")
-  assignedTrainings TrainingAssignment[]
-  scores            Score[]             @relation("EmployeeScores")
-
-  isTrainerAssigned Boolean  @default(false)
+  assignedTrainings   TrainingAssignment[] @relation("EmployeeTrainings")
+   scoresReceived    Score[]             @relation("EmployeeScores")
 }
 
 model Training {
-  id                Int       @id @default(autoincrement())
-  name              String
-  description       String?
-  startDate         DateTime
-  endDate           DateTime
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id          Int       @id @default(autoincrement())
+  name        String
+  domain      Domain    // Domain like Data Engineering, Full Stack, etc.
+  startDate   DateTime
+  endDate     DateTime
+  trainer     User?     @relation("TrainerToTraining", fields: [trainerId], references: [id])
+  trainerId   Int?
 
-  trainerId         Int?
-  trainer           User?       @relation("TrainerRelation", fields: [trainerId], references: [id])
-
-  assignedEmployees TrainingAssignment[]
-
-  scores            Score[]
+  assignedEmployees TrainingAssignment[]  // Employees assigned to this training
+  scores            Score[]               // Scores for this training
 }
-
-model PerformanceMetrics {
-  id                Int       @id @default(autoincrement())
-  name              String
-  description       String?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-
-  currentValue      Int?      @default(0)
-  threshold         Int       // Single threshold for this metric
-  increment         Int       // Value by which to increase if score > threshold
-
-  // Reverse relation fields
-  employeePerformanceMetrics EmployeePerformanceMetric[] @relation("MetricPerformanceMetrics")
-  metricThresholds           MetricThreshold[]           @relation("MetricThresholdMetrics")
-  
-  // Define reverse relation for Score
-  scores                      Score[]                    @relation("MetricToScores")
-}
-
 
 model Score {
-  id             Int      @id @default(autoincrement())
-  value          Int
-  threshold1     Int      
-  threshold2     Int      
-  performanceInc1 Int     
-  performanceInc2 Int     
-  employeeId     Int      
+  id          Int      @id @default(autoincrement())
+  value       Int
+  trainingId  Int
+  training    Training @relation(fields: [trainingId], references: [id])
   
-  employee       User     @relation("EmployeeScores", fields: [employeeId], references: [id])
-  trainingId     Int      
-  training       Training @relation(fields: [trainingId], references: [id])
+  employeeId  Int
+  employee    User     @relation("EmployeeScores", fields: [employeeId], references: [id])
   
-  metricId       Int      
-  metric         PerformanceMetrics @relation("MetricToScores", fields: [metricId], references: [id]) // Define the reverse relation here
+  trainerId   Int
+  trainer     User     @relation("TrainerScores", fields: [trainerId], references: [id])
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
-
 
 model TrainingAssignment {
-  id           Int      @id @default(autoincrement())
-  employeeId   Int      
-  employee     User     @relation(fields: [employeeId], references: [id])
-  trainingId   Int      
-  training     Training @relation(fields: [trainingId], references: [id])
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  employeeId  Int
+  employee    User     @relation("EmployeeTrainings", fields: [employeeId], references: [id])
 
-  isAssigned   Boolean  @default(true) // Tracks if the employee is currently assigned to this training
-  @@unique([employeeId, trainingId]) 
-}
+  trainingId  Int
+  training    Training @relation(fields: [trainingId], references: [id])
 
-model EmployeePerformanceMetric {
-  id                Int                  @id @default(autoincrement())
-  employeeId        Int
-  employee          User                 @relation("UserPerformanceMetrics", fields: [employeeId], references: [id]) // Corrected relation
-  metricId          Int
-  metric            PerformanceMetrics   @relation("MetricPerformanceMetrics", fields: [metricId], references: [id]) // Corrected relation
-  currentValue      Int                  @default(0) // Tracks the current value for the employee's performance on this metric
-  createdAt         DateTime             @default(now())
-  updatedAt         DateTime             @updatedAt
-}
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-model MetricThreshold {
-  id                Int                  @id @default(autoincrement())
-  threshold1        Int
-  threshold2        Int
-  performanceInc1   Int
-  performanceInc2   Int
-  performanceMetricId Int
-  performanceMetric PerformanceMetrics   @relation("MetricThresholdMetrics", fields: [performanceMetricId], references: [id]) // Corrected relation
-  createdAt         DateTime             @default(now())
-  updatedAt         DateTime             @updatedAt
+  @@unique([employeeId, trainingId])  // Ensure unique assignments
 }
 
 enum Role {
   ADMIN
   TRAINER
   EMPLOYEE
+}
+
+enum Domain {
+  FULL_STACK
+  DATA_ENGINEERING
+  MACHINE_LEARNING
+  DEVOPS
+  PROBLEM_SOLVING
 }

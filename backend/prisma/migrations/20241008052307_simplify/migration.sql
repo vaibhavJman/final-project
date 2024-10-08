@@ -1,6 +1,9 @@
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('ADMIN', 'TRAINER', 'EMPLOYEE');
 
+-- CreateEnum
+CREATE TYPE "Domain" AS ENUM ('DATA_ENGINEERING', 'MACHINE_LEARNING', 'FULL_STACK', 'LEADERSHIP', 'OTHER');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
@@ -9,10 +12,8 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "role" "Role" NOT NULL,
-    "speciality" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "isTrainerAssigned" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -21,39 +22,21 @@ CREATE TABLE "User" (
 CREATE TABLE "Training" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "description" TEXT,
+    "domain" "Domain" NOT NULL,
     "startDate" TIMESTAMP(3) NOT NULL,
     "endDate" TIMESTAMP(3) NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
     "trainerId" INTEGER,
 
     CONSTRAINT "Training_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "PerformanceMetrics" (
-    "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
-    "description" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "currentValue" INTEGER NOT NULL DEFAULT 0,
-
-    CONSTRAINT "PerformanceMetrics_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Score" (
     "id" SERIAL NOT NULL,
     "value" INTEGER NOT NULL,
-    "threshold1" INTEGER NOT NULL,
-    "threshold2" INTEGER NOT NULL,
-    "performanceInc1" INTEGER NOT NULL,
-    "performanceInc2" INTEGER NOT NULL,
-    "employeeId" INTEGER NOT NULL,
     "trainingId" INTEGER NOT NULL,
-    "metricId" INTEGER NOT NULL,
+    "employeeId" INTEGER NOT NULL,
+    "trainerId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -65,7 +48,6 @@ CREATE TABLE "TrainingAssignment" (
     "id" SERIAL NOT NULL,
     "employeeId" INTEGER NOT NULL,
     "trainingId" INTEGER NOT NULL,
-    "isAssigned" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -82,13 +64,13 @@ CREATE UNIQUE INDEX "TrainingAssignment_employeeId_trainingId_key" ON "TrainingA
 ALTER TABLE "Training" ADD CONSTRAINT "Training_trainerId_fkey" FOREIGN KEY ("trainerId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Score" ADD CONSTRAINT "Score_employeeId_fkey" FOREIGN KEY ("employeeId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "Score" ADD CONSTRAINT "Score_trainingId_fkey" FOREIGN KEY ("trainingId") REFERENCES "Training"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Score" ADD CONSTRAINT "Score_metricId_fkey" FOREIGN KEY ("metricId") REFERENCES "PerformanceMetrics"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Score" ADD CONSTRAINT "Score_employeeId_fkey" FOREIGN KEY ("employeeId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Score" ADD CONSTRAINT "Score_trainerId_fkey" FOREIGN KEY ("trainerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TrainingAssignment" ADD CONSTRAINT "TrainingAssignment_employeeId_fkey" FOREIGN KEY ("employeeId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
