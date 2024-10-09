@@ -25,7 +25,7 @@ const Sidebar = ({ activeNav, setActiveNav }) => {
         {[
           { name: "Dashboard", icon: MdDashboard, path: "/welcome" }, // Adjusted path
           { name: "Trainers", icon: BsPeopleFill, path: "/trainers" },
-          { name: "Score", icon: PiExamFill , path: "/score" }, // Example path for Score
+          { name: "Trainings", icon: PiExamFill , path: "/training" }, // Example path for Score
           // { name: "Performance", icon: GrDocumentPerformance, path: "/performance" }, // Example path for Performance
         ].map((item) => (
           <button

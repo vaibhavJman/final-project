@@ -17,11 +17,12 @@ app.use(express.json()); // Parse JSON bodies
 const userRoutes = require("./src/routes/userRoutes");
 // const employeeRoutes = require("./src/routes/employeeRoutes");
 const adminRoutes = require("./src/routes/adminRoutes");
-
+const trainerRoutes = require("./src/routes/trainerRoutes")
 
 // Use Routes
 app.use("/api/user/", userRoutes);
-app.use("/api/admin/", adminRoutes); // Add this line
+app.use("/api/admin/", adminRoutes); 
+app.use("/api/trainer/", trainerRoutes);
 
 
 app.get("/", (req, res) => {

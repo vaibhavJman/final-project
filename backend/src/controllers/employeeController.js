@@ -1,32 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-// const getAllEmployees = async (req, res) => {
-//   try {
-//     // Fetch all users with the role of 'EMPLOYEE', including the gender field
-//     const employees = await prisma.user.findMany({
-//       where: { role: "EMPLOYEE" }, // Ensure you are fetching employees only
-//       select: {
-//         id: true,
-//         firstName: true,
-//         lastName: true,
-//         email: true,
-//         gender: true,  // Explicitly select the gender field (now String)
-//         createdAt: true,
-//         updatedAt: true
-//       },
-//     }); 
-
-//     // Return the employees in JSON format
-//     res.json(employees);
-//   } catch (error) {
-//     // Handle errors by returning a 500 status with the error message
-//     res.status(500).json({ error: error.message });
-//   }
-// };
-
-
-
 const getEmployeeCount = async (req, res) => {
   try {
     const employeeCount = await prisma.user.count({
@@ -69,16 +43,14 @@ const getTrainingCount = async (req, res) => {
   }
 };
 
-
-
 const getGenderCount = async (req, res) => {
   try {
     const maleCount = await prisma.user.count({
-      where: { gender: "MALE" }
+      where: { gender: "MALE" },
     });
 
     const femaleCount = await prisma.user.count({
-      where: {  gender: "FEMALE" }
+      where: { gender: "FEMALE" },
     });
 
     res.json({ male: maleCount, female: femaleCount });
@@ -87,33 +59,27 @@ const getGenderCount = async (req, res) => {
   }
 };
 
-
-
-
-const getAllTrainers =  async (req, res) => {
-    try{
-
-const trainers = await prisma.user.findMany({
-  where: {
-    role : "TRAINER"
-  },
-  include: {
-    trainingsAssignedtoTrainers: 
-    {
+const getAllTrainers = async (req, res) => {
+  try {
+    const trainers = await prisma.user.findMany({
+      where: {
+        role: "TRAINER",
+      },
       include: {
-        domain: true,
-        assignedEmployees: true
-      }
-    }
-    
-  } 
-})
+        trainingsAssignedtoTrainers: {
+          include: {
+            domain: true,
+            assignedEmployees: true,
+          },
+        },
+      },
+    });
 
-res.json(trainers)
-    }catch (error) {
-      res.status(500).json({ error: error.message });
-    }
+    res.json(trainers);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
+};
 
 // const getALLscore = async (req, res) => {
 //   try{
@@ -137,7 +103,53 @@ res.json(trainers)
 // }
 
 
+
+const getAllTrainings = async (req, res)=>{
+  try {
+    const trainings = await prisma.training.findMany({
+      include: {
+        trainer: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+        assignedEmployees: {
+          select: {
+            employeeId: true, // Get employee ID
+          },
+        },
+        domain: true
+      },
+    });
+
+    const formattedTrainings = trainings.map(training => ({
+      id: training.id,
+      name: training.name,
+      domainName: training.domain.name, // Assuming you have a domain relation set
+      startDate: training.startDate,
+      assignedEmployees: training.assignedEmployees.length, // Count of assigned employees
+      trainerName: training.trainer ? `${training.trainer.firstName} ${training.trainer.lastName}` : 'N/A',
+    }));
+
+    res.json(formattedTrainings);
+  } catch (error) {
+    console.error("Error fetching trainings:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+
+
+
+
 module.exports = {
-  getGenderCount, getEmployeeCount, getAdminCount, getTrainerCount, getTrainingCount,getAllTrainers,
+  getGenderCount,
+  getEmployeeCount,
+  getAdminCount,
+  getTrainerCount,
+  getTrainingCount,
+  getAllTrainers,
+  getAllTrainings,
   // getALLscore
 };

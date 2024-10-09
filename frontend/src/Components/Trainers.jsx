@@ -1,44 +1,61 @@
-import { useState, useEffect   } from "react"; 
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell,} from "@/components/ui/table";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
 import Sidebar from "@/components/Sidebar";
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogFooter,} from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Trainers = () => {
   const [activeNav, setActiveNav] = useState("trainers");
-  const [open, setOpen] = useState(false); 
-  const [editTrainerIndex, setEditTrainerIndex] = useState(null); 
-  
+  const [open, setOpen] = useState(false);
+  const [editTrainerIndex, setEditTrainerIndex] = useState(null);
+
   const [newTrainer, setNewTrainer] = useState({
     firstName: "",
     lastName: "",
     email: "",
     expertise: "",
-    trainingStatus: "Not Assigned",
     trainingName: "",
   });
 
-  const [trainers, setTrainers] = useState([ ]);
-
+  const [trainers, setTrainers] = useState([]);
+  const [filter, setFilter] = useState("all"); // State to handle filtering (all, assigned, notAssigned)
 
   useEffect(() => {
     fetch("http://localhost:5000/api/admin/trainers")
       .then((response) => response.json())
-      .then((data) => {setTrainers(data);console.log(data)});
-      
-
-    // setData(employees);
+      .then((data) => setTrainers(data));
   }, []);
 
-
-
-
-
-  const trainings = ["Data Engineering", "Full Stack Basics", "Leadership Training", "Machine Learning Advanced"];
+  const trainings = [
+    "Data Engineering",
+    "Full Stack Basics",
+    "Leadership Training",
+    "Machine Learning Advanced",
+  ];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -54,10 +71,9 @@ const Trainers = () => {
       fullName,
       email: newTrainer.email,
       expertise: newTrainer.expertise,
-      trainingStatus: newTrainer.trainingName ? "Assigned" : "Not Assigned",
       trainingName: newTrainer.trainingName,
     };
-    
+
     if (editTrainerIndex !== null) {
       const updatedTrainers = [...trainers];
       updatedTrainers[editTrainerIndex] = newEntry;
@@ -66,14 +82,13 @@ const Trainers = () => {
       setTrainers([...trainers, newEntry]);
     }
 
-    setOpen(false); 
-    setEditTrainerIndex(null); 
+    setOpen(false);
+    setEditTrainerIndex(null);
     setNewTrainer({
       firstName: "",
       lastName: "",
       email: "",
       expertise: "",
-      trainingStatus: "Not Assigned",
       trainingName: "",
     });
   };
@@ -84,11 +99,10 @@ const Trainers = () => {
       lastName: "",
       email: "",
       expertise: "",
-      trainingStatus: "Not Assigned",
       trainingName: "",
     });
-    setEditTrainerIndex(null); // Clear the edit index for adding a new trainer
-    setOpen(true); // Open the dialog
+    setEditTrainerIndex(null);
+    setOpen(true);
   };
 
   const handleEditTrainer = (index) => {
@@ -109,6 +123,17 @@ const Trainers = () => {
     const updatedTrainers = trainers.filter((_, i) => i !== index);
     setTrainers(updatedTrainers);
   };
+
+  // Filtering trainers based on assigned or not assigned trainings
+  const filteredTrainers = trainers.filter((trainer) => {
+    if (filter === "assigned") {
+      return trainer.trainingsAssignedtoTrainers.length > 0;
+    }
+    if (filter === "notAssigned") {
+      return trainer.trainingsAssignedtoTrainers.length === 0;
+    }
+    return true;
+  });
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -131,14 +156,17 @@ const Trainers = () => {
                 </Button>
               </DialogTrigger>
               <DialogContent>
-                <DialogTitle>{editTrainerIndex !== null ? "Edit Trainer" : "Add New Trainer"}</DialogTitle>
+                <DialogTitle>
+                  {editTrainerIndex !== null
+                    ? "Edit Trainer"
+                    : "Add New Trainer"}
+                </DialogTitle>
                 <DialogDescription>
-                  Please fill in the details to {editTrainerIndex !== null ? "edit" : "add"} the trainer.
+                  Please fill in the details to{" "}
+                  {editTrainerIndex !== null ? "edit" : "add"} the trainer.
                 </DialogDescription>
-
-
-
                 <div className="space-y-4">
+                  {/* Input Fields */}
                   <div>
                     <Label htmlFor="firstName">First Name</Label>
                     <Input
@@ -209,21 +237,47 @@ const Trainers = () => {
             </Dialog>
           </CardHeader>
 
+          {/* Filter Trainers */}
+          <div className="flex justify-end mb-4 w-52 ml-6">
+            <Select onValueChange={(value) => setFilter(value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Filter trainers" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Trainers</SelectItem>
+                <SelectItem value="assigned">With Assigned Training</SelectItem>
+                <SelectItem value="notAssigned">
+                  Without Assigned Training
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="font-bold text-center">Trainer ID</TableHead>
+                  <TableHead className="font-bold text-center">
+                    Trainer ID
+                  </TableHead>
                   <TableHead className="font-bold text-center">Name</TableHead>
                   <TableHead className="font-bold text-center">Email</TableHead>
-                  <TableHead className="font-bold text-center">Training Name</TableHead>
-                  <TableHead className="font-bold text-center">Domain Name</TableHead>
-                  <TableHead className="font-bold text-center">No. of Employee Assigned</TableHead>
-                  <TableHead className="font-bold text-center">Actions</TableHead>
+                  <TableHead className="font-bold text-center">
+                    Training Name
+                  </TableHead>
+                  <TableHead className="font-bold text-center">
+                    Domain Name
+                  </TableHead>
+                  <TableHead className="font-bold text-center">
+                    No. of Employee Assigned
+                  </TableHead>
+                  <TableHead className="font-bold text-center">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {trainers.map((trainer, index) => (
+                {filteredTrainers.map((trainer, index) => (
                   <TableRow key={trainer.id} className="h-[6vh]">
                     <TableCell className="font-medium text-center px-6 py-3 min-w-[120px]">
                       {trainer.id}
@@ -235,21 +289,43 @@ const Trainers = () => {
                       {trainer.email}
                     </TableCell>
                     <TableCell className="text-center px-6 py-3 min-w-[150px]">
-                      {trainer.trainingsAssignedtoTrainers.map((item) => item.name)}
+                      {/* Check if trainingsAssignedtoTrainers is defined and is an array */}
+                      {Array.isArray(trainer.trainingsAssignedtoTrainers) &&
+                      trainer.trainingsAssignedtoTrainers.length > 0
+                        ? trainer.trainingsAssignedtoTrainers
+                            .map((item) => item.name)
+                            .join(", ")
+                        : "-"}
                     </TableCell>
                     <TableCell className="text-center px-6 py-3 min-w-[150px]">
-                      {trainer.trainingsAssignedtoTrainers.map((item) => item.domain.name)}
+                      {/* Check if trainingsAssignedtoTrainers is defined and is an array */}
+                      {Array.isArray(trainer.trainingsAssignedtoTrainers) &&
+                      trainer.trainingsAssignedtoTrainers.length > 0
+                        ? trainer.trainingsAssignedtoTrainers.map((item) =>
+                            item.domain.name.replace("_", " ")
+                          )
+                        : "-"}
                     </TableCell>
                     <TableCell className="text-center px-6 py-3 min-w-[150px]">
-                      {trainer.trainingsAssignedtoTrainers.map((item) => item.assignedEmployees.length)}
+                      {trainer.trainingsAssignedtoTrainers.length > 0
+                        ? trainer.trainingsAssignedtoTrainers.map(
+                            (item) => item.assignedEmployees.length
+                          )
+                        : "-"}
                     </TableCell>
-
-                    <TableCell className="text-center px-6 py-3 min-w-[150px]">
-                      <Button onClick={() => handleEditTrainer(index)} size="sm" variant="outline">
+                    <TableCell className="text-center px-6 py-3">
+                      <Button
+                        size="sm"
+                        className="mr-2"
+                        onClick={() => handleEditTrainer(index)}
+                      >
                         Edit
                       </Button>
-                      <span className="mx-1" /> {/* Space between buttons */}
-                      <Button onClick={() => handleDeleteTrainer(index)} size="sm" variant="destructive">
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => handleDeleteTrainer(index)}
+                      >
                         Delete
                       </Button>
                     </TableCell>

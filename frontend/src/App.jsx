@@ -4,7 +4,8 @@ import Login from './Components/Login';
 import Signup from './Components/Signup';
 import Welcome from './Components/AdminDashboard';
 import Trainers from './Components/trainers';
-import Score from './Components/Score';
+import Training from './Components/Trainings';
+import TrainerDashboard from './Components/TrainerDashboard';
 
 
 const App = () => {
@@ -16,7 +17,8 @@ const App = () => {
         <Route path="/welcome" element={<Welcome />} />
         <Route path="/" element={<Signup />} />
         <Route path='/trainers' element= {<Trainers />} />
-        <Route path="/score" element={<Score />} />
+        <Route path="/training" element={<Training />} />
+        <Route path="/trainer/dashboard" element={< TrainerDashboard/>} />
       </Routes>
     </Router>
   );

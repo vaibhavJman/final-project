@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
-import { ResponsiveContainer, CartesianGrid, Tooltip, XAxis, YAxis, BarChart, Bar } from "recharts";
+import {
+  ResponsiveContainer,
+  CartesianGrid,
+  Tooltip,
+  XAxis,
+  YAxis,
+  BarChart,
+  Bar,
+} from "recharts";
 import Sidebar from "./Sidebar";
 import { IoMdSettings } from "react-icons/io";
 import { FaBell } from "react-icons/fa";
@@ -8,14 +16,23 @@ import { FaUsers } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import EmpTable from "./EmpTable.jsx";
 import GenderRatioChart from "./PieChart.jsx";
 
 export default function Dashboard() {
   const [activeNav, setActiveNav] = useState("dashboard");
-  const [selectedDomain, setSelectedDomain] = useState("Machine Learning");
+  const [selectedDomain, setSelectedDomain] = useState("MACHINE_LEARNING");
   const [topEmployees, setTopEmployees] = useState([]);
+  const [employeeCountSelection, setEmployeeCountSelection] = useState(5); // Default to Top 5
+
 
   const [employeeCount, setEmployeeCount] = useState(0);
   const [adminCount, setAdminCount] = useState(0);
@@ -25,12 +42,13 @@ export default function Dashboard() {
   useEffect(() => {
     // Fetch data for counts
     const fetchCounts = async () => {
-      const [employeeRes, adminRes, trainerRes, trainingRes] = await Promise.all([
-        fetch('http://localhost:5000/api/admin/employeeCount'),
-        fetch('http://localhost:5000/api/admin/adminCount'),
-        fetch('http://localhost:5000/api/admin/trainerCount'),
-        fetch('http://localhost:5000/api/admin/trainingCount')
-      ]);
+      const [employeeRes, adminRes, trainerRes, trainingRes] =
+        await Promise.all([
+          fetch("http://localhost:5000/api/admin/employeeCount"),
+          fetch("http://localhost:5000/api/admin/adminCount"),
+          fetch("http://localhost:5000/api/admin/trainerCount"),
+          fetch("http://localhost:5000/api/admin/trainingCount"),
+        ]);
 
       const employeeData = await employeeRes.json();
       const adminData = await adminRes.json();
@@ -51,13 +69,13 @@ export default function Dashboard() {
     fetch("http://localhost:5000/api/admin/table")
       .then((response) => response.json())
       .then((data) => {
-        // Sort and get top 5 employees based on the selected domain
         const sortedEmployees = data
           .sort((a, b) => b[selectedDomain] - a[selectedDomain])
-          .slice(0, 5); // Get top 5 employees
+          .slice(0, employeeCountSelection); // Use the selected count here
         setTopEmployees(sortedEmployees);
       });
-  }, [selectedDomain]);
+  }, [selectedDomain, employeeCountSelection]); // Add employeeCountSelection as a dependency
+  
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -70,7 +88,7 @@ export default function Dashboard() {
       <Sidebar activeNav={activeNav} setActiveNav={setActiveNav} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="flex items-center justify-between px-6 py-4 bg-white border-b">
+        <header className="flex items-center justify-between px-6 py-2 bg-white border-b">
           <h2 className="text-xl font-semibold">Admin Dashboard</h2>
           <div className="flex items-center">
             <Button variant="ghost" size="icon">
@@ -79,7 +97,10 @@ export default function Dashboard() {
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Avatar className="ml-4">
-                  <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
+                  <AvatarImage
+                    src="/placeholder.svg?height=32&width=32"
+                    alt="User"
+                  />
                   <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
@@ -143,9 +164,36 @@ export default function Dashboard() {
           <div className="flex gap-8 mb-8">
             <Card className="col-span-1 md:col-span-3 w-2/3">
               <CardHeader className="flex items-center">
-                <CardTitle>Top 5 Employees in {selectedDomain}</CardTitle>
-                <div className="flex items-center">
-                  <label htmlFor="domain-select" className="mr-2 text-sm font-medium">Select Domain:</label>
+                <CardTitle>
+                  Top {employeeCountSelection} Employees in {selectedDomain}
+                </CardTitle>
+                <div className="flex items-center ml-4">
+                  <label
+                    htmlFor="count-select"
+                    className="mr-2 text-sm font-medium"
+                  >
+                    Select Count:
+                  </label>
+                  <select
+                    id="count-select"
+                    className="border border-gray-300 text-sm p-1 rounded"
+                    value={employeeCountSelection}
+                    onChange={(e) =>
+                      setEmployeeCountSelection(Number(e.target.value))
+                    }
+                  >
+                    <option value={5}>Top 5</option>
+                    <option value={10}>Top 10</option>
+                    <option value={15}>Top 15</option>
+                  </select>
+                </div>
+                <div className="flex items-center ml-4">
+                  <label
+                    htmlFor="domain-select"
+                    className="mr-2 text-sm font-medium"
+                  >
+                    Select Domain:
+                  </label>
                   <select
                     id="domain-select"
                     className="border border-gray-300 text-sm p-1 rounded"
@@ -158,14 +206,19 @@ export default function Dashboard() {
                   </select>
                 </div>
               </CardHeader>
+
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={topEmployees}>
+                  <BarChart data={topEmployees}  >
                     <CartesianGrid strokeDasharray="3 3" />
+                    <YAxis />
                     <XAxis dataKey="fullName" />
-                    <YAxis domain={[0, 120]} />
                     <Tooltip />
-                    <Bar dataKey={selectedDomain} stroke="#A855F7" fill="#8884d8" />
+                    <Bar
+                      dataKey={selectedDomain}
+                      stroke="#A855F7"
+                      fill="#8884d8"
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
