@@ -1,60 +1,96 @@
 import React, { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
+import Sidebar from "@/components/Sidebar"; // Adjust the path as necessary
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 const TrainerDashboard = () => {
+  const [activeNav, setActiveNav] = useState("trainings");
   const [trainings, setTrainings] = useState([]);
-  const [error, setError] = useState("");
-  const userId = localStorage.getItem("userId"); // Get user ID from local storage
+
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     const fetchTrainings = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/trainer/trainings/${userId}`);
+        const response = await axios.get(
+          `http://localhost:5000/api/trainer/trainings/${userId}`
+        );
         setTrainings(response.data);
-      } catch (err) {
-        setError("Failed to fetch trainings");
+      } catch (error) {
+        console.error("Error fetching trainings:", error);
       }
     };
 
     fetchTrainings();
   }, [userId]);
 
-  const handleEditScore = async (employeeId, newScore) => {
-    try {
-      await axios.put(`http://localhost:5000/api/trainer/score/${employeeId}`, { score: newScore });
-      // Optionally, refresh the training data after editing the score
-    } catch (err) {
-      setError("Failed to update score");
-    }
-  };
-
   return (
-    <div>
-      <h1>Trainer Dashboard</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {trainings.length > 0 ? (
-        trainings.map(training => (
-          <div key={training.id}>
-            <h2>{training.name}</h2>
-            <ul>
-              {training.enrolledEmployees.map(employee => (
-                <li key={employee.id}>
-                  {employee.name} - Score: {employee.score}
-                  {/* Add edit functionality here */}
-                  <input
-                    type="number"
-                    placeholder="Edit Score"
-                    onChange={(e) => handleEditScore(employee.id, e.target.value)}
-                  />
-                </li>
+    <div className="flex min-h-screen">
+      {/* <Sidebar activeNav={activeNav} setActiveNav={setActiveNav} /> */}
+
+      <div className="flex-grow p-6 bg-gray-100">
+        {/* Display Employees and Their Scores */}
+        {trainings.length > 0 && (
+          <Card className="mt-4">
+
+            <CardContent>
+              {trainings.map((training) => (
+                <div key={training.id} className="mt-4">
+                  <h3 className="text-lg font-semibold mb-10">Employees Enrolled in {training.name.toLowerCase().replace("_"," ")}</h3>
+                  <Table>
+                    <TableHeader>
+                      <TableRow  className="h-[50px] text-center">
+                        <TableHead className="font-bold text-center">
+                          Employee ID
+                        </TableHead>
+                        <TableHead className="font-bold text-center">
+                          Employee Name
+                        </TableHead>
+                        <TableHead className="font-bold text-center">
+                          Email ID
+                        </TableHead>
+                        <TableHead className="font-bold text-center">
+                          Score
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {training.assignedEmployees.map((employee) => (
+                        <TableRow key={employee.employeeId}>
+                          <TableCell className="text-center">
+                            {employee.employeeId}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {employee.employee.firstName}{" "}
+                            {employee.employee.lastName}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {employee.employee.email}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {training.scores.find(
+                              (score) =>
+                                score.employeeId === employee.employeeId
+                            )?.value || "No Score"}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               ))}
-            </ul>
-          </div>
-        ))
-      ) : (
-        <p>No trainings assigned.</p>
-      )}
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 };

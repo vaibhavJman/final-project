@@ -4,12 +4,24 @@ const prisma = new PrismaClient();
 const getTrainersByID = async (req, res) => {
   try {
     const { userId } = req.params;
+    const trainerId = parseInt(userId, 10);
+
+    if (isNaN(trainerId)) {
+      return res.status(400).json({ error: "Invalid user ID provided" });
+    }
+
   const trainings = await prisma.training.findMany({
     where: {
-      trainerId: userId, // Fetch trainings assigned to this trainer
+      trainerId: trainerId,
     },
     include: {
-      assignedEmployees: true, // Include employees enrolled in this training
+      assignedEmployees: {
+        include:{
+          employee: true
+        }
+      }, 
+      scores: true,
+      domain: true
     },
   });
   res.json(trainings);

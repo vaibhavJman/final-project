@@ -1,0 +1,4 @@
+name,description,startDate,endDate,domainId,trainerId
+DATA_ENGINEERING Training,This training focuses on DATA_ENGINEERING skills and knowledge.,2024-04-20,2024-05-24,DATA_ENGINEERING,
+MACHINE_LEARNING Training,This training focuses on MACHINE_LEARNING skills and knowledge.,2024-07-31,2024-09-07,MACHINE_LEARNING,
+FULL_STACK Training,This training focuses on FULL_STACK skills and knowledge.,2024-07-26,2024-08-21,FULL_STACK,

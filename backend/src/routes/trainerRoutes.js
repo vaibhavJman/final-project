@@ -4,7 +4,7 @@ const { getTrainersByID } = require("../controllers/trainerController");
 
 const router = express.Router();
 
-router.post("/trainings/:userId", getTrainersByID);
+router.get("/trainings/:userId", getTrainersByID);
 
 
 
