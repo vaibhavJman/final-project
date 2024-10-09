@@ -1,22 +1,8 @@
-import { useState } from "react"; 
+import { useState, useEffect   } from "react"; 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell,} from "@/components/ui/table";
 import Sidebar from "@/components/Sidebar";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogFooter,} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,6 +12,7 @@ const Trainers = () => {
   const [activeNav, setActiveNav] = useState("trainers");
   const [open, setOpen] = useState(false); 
   const [editTrainerIndex, setEditTrainerIndex] = useState(null); 
+  
   const [newTrainer, setNewTrainer] = useState({
     firstName: "",
     lastName: "",
@@ -35,24 +22,21 @@ const Trainers = () => {
     trainingName: "",
   });
 
-  const [trainers, setTrainers] = useState([
-    {
-      id: 1,
-      fullName: "Alice Johnson",
-      email: "alice@example.com",
-      expertise: "Data Science",
-      trainingStatus: "Assigned",
-      trainingName: "Data Engineering 101",
-    },
-    {
-      id: 2,
-      fullName: "Bob Smith",
-      email: "bob@example.com",
-      expertise: "Full Stack",
-      trainingStatus: "Not Assigned",
-      trainingName: "",
-    },
-  ]);
+  const [trainers, setTrainers] = useState([ ]);
+
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/admin/trainers")
+      .then((response) => response.json())
+      .then((data) => {setTrainers(data);console.log(data)});
+      
+
+    // setData(employees);
+  }, []);
+
+
+
+
 
   const trainings = ["Data Engineering", "Full Stack Basics", "Leadership Training", "Machine Learning Advanced"];
 
@@ -136,7 +120,7 @@ const Trainers = () => {
             <div>
               <CardTitle>Trainers List</CardTitle>
               <p className="text-sm text-gray-600 mt-2">
-                Below is a list of trainers, their expertise, and assigned trainings.
+                Below is a list of trainers and assigned trainings.
               </p>
             </div>
             {/* Add New Trainer Button */}
@@ -151,6 +135,9 @@ const Trainers = () => {
                 <DialogDescription>
                   Please fill in the details to {editTrainerIndex !== null ? "edit" : "add"} the trainer.
                 </DialogDescription>
+
+
+
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="firstName">First Name</Label>
@@ -229,8 +216,9 @@ const Trainers = () => {
                   <TableHead className="font-bold text-center">Trainer ID</TableHead>
                   <TableHead className="font-bold text-center">Name</TableHead>
                   <TableHead className="font-bold text-center">Email</TableHead>
-                  <TableHead className="font-bold text-center">Expertise</TableHead>
                   <TableHead className="font-bold text-center">Training Name</TableHead>
+                  <TableHead className="font-bold text-center">Domain Name</TableHead>
+                  <TableHead className="font-bold text-center">No. of Employee Assigned</TableHead>
                   <TableHead className="font-bold text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -241,17 +229,21 @@ const Trainers = () => {
                       {trainer.id}
                     </TableCell>
                     <TableCell className="font-medium text-center px-6 py-3 min-w-[150px]">
-                      {trainer.fullName}
+                      {trainer.firstName} {trainer.lastName}
                     </TableCell>
                     <TableCell className="text-center px-6 py-3 min-w-[150px]">
                       {trainer.email}
                     </TableCell>
                     <TableCell className="text-center px-6 py-3 min-w-[150px]">
-                      {trainer.expertise}
+                      {trainer.trainingsAssignedtoTrainers.map((item) => item.name)}
                     </TableCell>
                     <TableCell className="text-center px-6 py-3 min-w-[150px]">
-                      {trainer.trainingName}
+                      {trainer.trainingsAssignedtoTrainers.map((item) => item.domain.name)}
                     </TableCell>
+                    <TableCell className="text-center px-6 py-3 min-w-[150px]">
+                      {trainer.trainingsAssignedtoTrainers.map((item) => item.assignedEmployees.length)}
+                    </TableCell>
+
                     <TableCell className="text-center px-6 py-3 min-w-[150px]">
                       <Button onClick={() => handleEditTrainer(index)} size="sm" variant="outline">
                         Edit

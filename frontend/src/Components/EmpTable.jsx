@@ -10,26 +10,24 @@ import {
 } from "@/components/ui/table";
 
 const EmpTable = () => {
-  // Optional: If fetching data via API, you could set up state here
   const [data, setData] = useState([]);
-
+  console.log(data);
   useEffect(() => {
-    // Example API call logic if fetching from the backend
     fetch("http://localhost:5000/api/admin/table")
       .then((response) => response.json())
       .then((data) => setData(data));
-    // In this case, we just use the static data provided above:
+
     // setData(employees);
   }, []);
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="container mx-auto min-h-screen">
       <Card>
         <CardHeader>
           <CardTitle>Employee Performance</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
+          <Table >
             <TableHeader className="h-[60px]">
               <TableRow>
                 <TableHead className="font-bold  text-center">
@@ -52,7 +50,7 @@ const EmpTable = () => {
             </TableHeader>
             <TableBody>
               {data.map((employee) => (
-                <TableRow key={employee.id} className="h-[50px] text-center">
+                <TableRow key={employee.id} className="h-[50px] text-center ">
                   <TableCell>{employee.id}</TableCell>
                   <TableCell>{employee.fullName}</TableCell>
                   {/* <TableCell>{employee.email.split('.')[0]}</TableCell> */}
