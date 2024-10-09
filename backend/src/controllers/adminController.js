@@ -7,7 +7,7 @@ const getTable = async (req, res) => {
     const employees = await prisma.user.findMany({
       where: { role: "EMPLOYEE" },
       select: {
-        id: true,   
+        id: true,
         firstName: true,
         lastName: true,
         email: true,
@@ -21,11 +21,7 @@ const getTable = async (req, res) => {
         const domains = await prisma.domain.findMany({
           where: {
             name: {
-              in: [
-                "DATA_ENGINEERING",
-                "MACHINE_LEARNING",
-                "FULL_STACK",
-              ],
+              in: ["DATA_ENGINEERING", "MACHINE_LEARNING", "FULL_STACK"],
             },
           },
           select: {

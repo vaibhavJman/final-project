@@ -12,11 +12,11 @@ const getAllEmployees = async (req, res) => {
         firstName: true,
         lastName: true,
         email: true,
-        // gender: true,  // Explicitly select the gender field (now String)
+        gender: true,  // Explicitly select the gender field (now String)
         createdAt: true,
         updatedAt: true
       },
-    });
+    }); 
 
     // Return the employees in JSON format
     res.json(employees);
@@ -26,6 +26,29 @@ const getAllEmployees = async (req, res) => {
   }
 };
 
+const getALLscore = async (req, res) => {
+  try{
+    const scores = await prisma.score.groupBy({
+      by : ["employeeId"],
+      _avg: {
+        value: true
+      },
+      orderBy: {
+        _avg: "desc"
+      }
+    })
+    res.json(scores);
+  }catch(error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+const getHello = async (req, res) => {
+  res.json("Hello There")
+}
+
+
 module.exports = {
   getAllEmployees,
+  getALLscore
 };

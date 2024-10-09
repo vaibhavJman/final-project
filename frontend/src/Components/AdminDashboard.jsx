@@ -31,7 +31,6 @@ import EmpTable from "./EmpTable.jsx";
 
 export default function Dashboard() {
   const [activeNav, setActiveNav] = useState("dashboard");
-  
 
   const employees = [
     {
