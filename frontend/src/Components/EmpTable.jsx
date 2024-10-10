@@ -19,10 +19,9 @@ const EmpTable = () => {
       .then((data) => setData(data));
   }, []);
 
-  // Filter data based on search term
   const filteredData = data.filter(employee => {
     const fullName = employee.fullName.toLowerCase();
-    const employeeId = employee.id.toString(); // Convert ID to string for comparison
+    const employeeId = employee.id.toString();
     return (
       fullName.includes(searchTerm.toLowerCase()) ||
       employeeId.includes(searchTerm)
@@ -36,7 +35,6 @@ const EmpTable = () => {
           <CardTitle>Employee Performance</CardTitle>
         </CardHeader>
         <CardContent>
-          {/* Search Input */}
           <div className="mb-4">
             <input
               type="text"

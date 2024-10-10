@@ -8,18 +8,17 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-import Sidebar from "@/components/Sidebar"; // Adjust the path as necessary
-import axios from "axios"; // Make sure to install axios
+import Sidebar from "@/components/Sidebar"; 
+import axios from "axios"; 
 
 const Training = () => {
-  const [activeNav, setActiveNav] = useState("score"); // Manage the active navigation state
-  const [trainings, setTrainings] = useState([]); // State to hold training data
-  const [searchTerm, setSearchTerm] = useState(""); // State for search input
-
+  const [activeNav, setActiveNav] = useState("score"); 
+  const [trainings, setTrainings] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(""); 
   useEffect(() => {
     const fetchTrainings = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/admin/trainings"); // Adjust the URL based on your setup
+        const response = await axios.get("http://localhost:5000/api/admin/trainings"); 
         setTrainings(response.data);
       } catch (error) {
         console.error("Error fetching trainings:", error);
@@ -29,7 +28,6 @@ const Training = () => {
     fetchTrainings();
   }, []);
 
-  // Filter trainings based on the search term
   const filteredTrainings = trainings.filter((training) => {
     return (
       training.id.toString().includes(searchTerm) ||
@@ -81,7 +79,7 @@ const Training = () => {
                       {training.domainName}
                     </TableCell>
                     <TableCell className="text-center px-6 py-3 min-w-[150px]">
-                      {new Date(training.startDate).toLocaleDateString()} {/* Format the date as needed */}
+                      {new Date(training.startDate).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-center px-6 py-3 min-w-[150px]">
                       {training.assignedEmployees}

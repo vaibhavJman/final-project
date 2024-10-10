@@ -42,8 +42,7 @@ const Trainers = () => {
   });
 
   const [trainers, setTrainers] = useState([]);
-  const [filter, setFilter] = useState("all"); // State to handle filtering (all, assigned, notAssigned)
-
+  const [filter, setFilter] = useState("all"); 
   useEffect(() => {
     fetch("http://localhost:5000/api/admin/trainers")
       .then((response) => response.json())
@@ -124,7 +123,6 @@ const Trainers = () => {
     setTrainers(updatedTrainers);
   };
 
-  // Filtering trainers based on assigned or not assigned trainings
   const filteredTrainers = trainers.filter((trainer) => {
     if (filter === "assigned") {
       return trainer.trainingsAssignedtoTrainers.length > 0;
@@ -289,7 +287,6 @@ const Trainers = () => {
                       {trainer.email}
                     </TableCell>
                     <TableCell className="text-center px-6 py-3 min-w-[150px]">
-                      {/* Check if trainingsAssignedtoTrainers is defined and is an array */}
                       {Array.isArray(trainer.trainingsAssignedtoTrainers) &&
                       trainer.trainingsAssignedtoTrainers.length > 0
                         ? trainer.trainingsAssignedtoTrainers
@@ -298,7 +295,6 @@ const Trainers = () => {
                         : "-"}
                     </TableCell>
                     <TableCell className="text-center px-6 py-3 min-w-[150px]">
-                      {/* Check if trainingsAssignedtoTrainers is defined and is an array */}
                       {Array.isArray(trainer.trainingsAssignedtoTrainers) &&
                       trainer.trainingsAssignedtoTrainers.length > 0
                         ? trainer.trainingsAssignedtoTrainers.map((item) =>

@@ -1,119 +1,81 @@
-import { useState } from "react";
-import { ResponsiveContainer, CartesianGrid, Tooltip, XAxis, YAxis, BarChart, Bar, PieChart, Pie, Cell, Legend } from "recharts";
+import { useState, useEffect } from "react";
+import {
+  ResponsiveContainer,
+  CartesianGrid,
+  Tooltip,
+  XAxis,
+  YAxis,
+  BarChart,
+  Bar,
+} from "recharts";
 import Sidebar from "./Sidebar";
 import { IoMdSettings } from "react-icons/io";
 import { FaBell } from "react-icons/fa";
+import { BiUser, BiUserCheck, BiChalkboard } from "react-icons/bi"; 
+import { FaUsers } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import EmpTable from "./EmpTable.jsx";
+import GenderRatioChart from "./PieChart.jsx";
 
 export default function Dashboard() {
   const [activeNav, setActiveNav] = useState("dashboard");
+  const [selectedDomain, setSelectedDomain] = useState("MACHINE_LEARNING");
+  const [topEmployees, setTopEmployees] = useState([]);
+  const [employeeCountSelection, setEmployeeCountSelection] = useState(5); 
 
-  const employees = [
-    {
-      id: 1,
-      fullName: "Alice Johnson",
-      email: "alice@example.com",
-      trainingScores: {
-        DataScience: 85,
-        FullStack: 90,
-        DataEngineering: 80,
-      },
-      performanceMetrics: {
-        ProblemSolving: 88,
-        Leadership: 92,
-        DataScience: 85,
-      },
-    },
-    {
-      id: 2,
-      fullName: "Bob Smith",
-      email: "bob@example.com",
-      trainingScores: {
-        DataScience: 78,
-        FullStack: 85,
-        DataEngineering: 82,
-      },
-      performanceMetrics: {
-        ProblemSolving: 90,
-        Leadership: 80,
-        DataScience: 79,
-      },
-    },
-    {
-      id: 3,
-      fullName: "Charlie Brown",
-      email: "charlie@example.com",
-      trainingScores: {
-        DataScience: 92,
-        FullStack: 88,
-        DataEngineering: 91,
-      },
-      performanceMetrics: {
-        ProblemSolving: 95,
-        Leadership: 94,
-        DataScience: 92,
-      },
-    },
-    {
-      id: 4,
-      fullName: "Steve Rogers",
-      email: "steve@example.com",
-      trainingScores: {
-        DataScience: 92,
-        FullStack: 88,
-        DataEngineering: 91,
-      },
-      performanceMetrics: {
-        ProblemSolving: 95,
-        Leadership: 94,
-        DataScience: 92,
-      },
-    },
-    {
-      id: 5,
-      fullName: "Sam Wilson",
-      email: "sam@example.com",
-      trainingScores: {
-        DataScience: 92,
-        FullStack: 88,
-        DataEngineering: 91,
-      },
-      performanceMetrics: {
-        ProblemSolving: 95,
-        Leadership: 94,
-        DataScience: 92,
-      },
-    },
-    {
-      id: 6,
-      fullName: "Samuel Stark",
-      email: "samuel@example.com",
-      trainingScores: {
-        DataScience: 92,
-        FullStack: 88,
-        DataEngineering: 91,
-      },
-      performanceMetrics: {
-        ProblemSolving: 89,
-        Leadership: 64,
-        DataScience: 99,
-      },
-    },
-  ];
 
-  const jobPerformanceMetrics = [
-    { metric: "DataEngineering", score: 4 },
-    { metric: "DataScience", score: 3 },
-    { metric: "FullStack", score: 4 },
-    { metric: "ProblemSolving", score: 4 },
-    { metric: "Leadership", score: 5 },
-  ];
+  const [employeeCount, setEmployeeCount] = useState(0);
+  const [adminCount, setAdminCount] = useState(0);
+  const [trainerCount, setTrainerCount] = useState(0);
+  const [trainingCount, setTrainingCount] = useState(0);
 
-  const topEmployees = employees.sort((a, b) => b.performanceMetrics.ProblemSolving - a.performanceMetrics.ProblemSolving).slice(0, 5);
+  useEffect(() => {
+    // Fetch data for counts
+    const fetchCounts = async () => {
+      const [employeeRes, adminRes, trainerRes, trainingRes] =
+        await Promise.all([
+          fetch("http://localhost:5000/api/admin/employeeCount"),
+          fetch("http://localhost:5000/api/admin/adminCount"),
+          fetch("http://localhost:5000/api/admin/trainerCount"),
+          fetch("http://localhost:5000/api/admin/trainingCount"),
+        ]);
+
+      const employeeData = await employeeRes.json();
+      const adminData = await adminRes.json();
+      const trainerData = await trainerRes.json();
+      const trainingData = await trainingRes.json();
+
+      setEmployeeCount(employeeData.count);
+      setAdminCount(adminData.count);
+      setTrainerCount(trainerData.count);
+      setTrainingCount(trainingData.count);
+    };
+
+    fetchCounts();
+  }, []);
+
+  useEffect(() => {
+    // Fetch data from the API
+    fetch("http://localhost:5000/api/admin/table")
+      .then((response) => response.json())
+      .then((data) => {
+        const sortedEmployees = data
+          .sort((a, b) => b[selectedDomain] - a[selectedDomain])
+          .slice(0, employeeCountSelection); 
+        setTopEmployees(sortedEmployees);
+      });
+  }, [selectedDomain, employeeCountSelection]); 
+  
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -121,52 +83,12 @@ export default function Dashboard() {
     window.location.href = "/login";
   };
 
-  const getColor = (name) => {
-    switch (name) {
-      case "DataEngineering":
-        return "#fe89d8";
-      case "DataScience":
-        return "#da88dc";
-      case "FullStack":
-        return "#b786e0";
-      case "ProblemSolving":
-        return "#7084e7";
-      case "Leadership":
-        return "#9385e3";
-      default:
-        return "#000"; // fallback to black if name doesn't match
-    }
-  };
-
-  const COLORS = ["#fe89d8", "#da88dc", "#b786e0", "#9385e3", "#7084e7"];
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      const metricColor = getColor(payload[0].name); // Get the color for the corresponding metric
-      return (
-        <div className="bg-gray-800 text-white rounded-lg p-2">
-          <div className="flex items-center">
-            <span
-              className="w-3 h-3 rounded-full"
-              style={{
-                backgroundColor: metricColor,
-                marginRight: "8px",
-              }}
-            ></span>
-            <span style={{ marginRight: "30px" }}>{payload[0].name}:</span>
-            <span className="ml-auto">{payload[0].value}</span>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
-
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar activeNav={activeNav} setActiveNav={setActiveNav} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="flex items-center justify-between px-6 py-4 bg-white border-b">
+        <header className="flex items-center justify-between px-6 py-2 bg-white border-b">
           <h2 className="text-xl font-semibold">Admin Dashboard</h2>
           <div className="flex items-center">
             <Button variant="ghost" size="icon">
@@ -198,118 +120,122 @@ export default function Dashboard() {
         </header>
 
         <main className="flex-1 overflow-x-hidden overflow-y-auto p-6">
-          {/* KPI Cards */}
+       
           <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
-            {[{ title: "Average Scores", value: "92%", change: "+5%" }].map(
-              (kpi, index) => (
-                <Card key={index}>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      {kpi.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{kpi.value}</div>
-                    <p className="text-xs text-muted-foreground">
-                      {kpi.change} from last month
-                    </p>
-                  </CardContent>
-                </Card>
-              )
-            )}
-          </div>
-
-          {/* Charts Section */}
-          <div className="flex gap-8 mb-8">
-            <Card className="col-span-1 md:col-span-3 w-2/3">
-              <CardHeader>
-                <CardTitle>Top 5 Employees Scores</CardTitle>
+            <Card className="shadow-lg transition-transform duration-300 transform hover:scale-105 bg-blue-100">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <BiUser className="text-5xl text-blue-600" />
+                <CardTitle className="text-4xl">{employeeCount}</CardTitle>
               </CardHeader>
               <CardContent>
+                <div className="text-xs text-gray-700">Total Employees</div>
+              </CardContent>
+            </Card>
+            <Card className="shadow-lg transition-transform duration-300 transform hover:scale-105 bg-green-100">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <BiUserCheck className="text-5xl text-green-600" />
+                <CardTitle className="text-4xl">{adminCount}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-xs text-gray-700">Total Admins</div>
+              </CardContent>
+            </Card>
+            <Card className="shadow-lg transition-transform duration-300 transform hover:scale-105 bg-orange-100">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <FaUsers className="text-5xl text-orange-600" />
+                <CardTitle className="text-4xl">{trainerCount}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-xs text-gray-700">Total Trainers</div>
+              </CardContent>
+            </Card>
+            <Card className="shadow-lg transition-transform duration-300 transform hover:scale-105 bg-purple-100">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <BiChalkboard className="text-5xl text-purple-600" />
+                <CardTitle className="text-4xl">{trainingCount}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-xs text-gray-700">Total Trainings</div>
+              </CardContent>
+            </Card>
+          </div>
+
+         
+          <div className="flex gap-8 mb-8">
+            <Card className="col-span-1 md:col-span-3 w-2/3">
+              <CardHeader className="flex items-center">
+                <CardTitle>
+                  Top {employeeCountSelection} Employees in {selectedDomain}
+                </CardTitle>
+                <div className="flex items-center ml-4">
+                  <label
+                    htmlFor="count-select"
+                    className="mr-2 text-sm font-medium"
+                  >
+                    Select Count:
+                  </label>
+                  <select
+                    id="count-select"
+                    className="border border-gray-300 text-sm p-1 rounded"
+                    value={employeeCountSelection}
+                    onChange={(e) =>
+                      setEmployeeCountSelection(Number(e.target.value))
+                    }
+                  >
+                    <option value={5}>Top 5</option>
+                    <option value={10}>Top 10</option>
+                    <option value={15}>Top 15</option>
+                  </select>
+                </div>
+                <div className="flex items-center ml-4">
+                  <label
+                    htmlFor="domain-select"
+                    className="mr-2 text-sm font-medium"
+                  >
+                    Select Domain:
+                  </label>
+                  <select
+                    id="domain-select"
+                    className="border border-gray-300 text-sm p-1 rounded"
+                    value={selectedDomain}
+                    onChange={(e) => setSelectedDomain(e.target.value)}
+                  >
+                    <option value="DATA_ENGINEERING">Data Engineering</option>
+                    <option value="MACHINE_LEARNING">Machine Learning</option>
+                    <option value="FULL_STACK">Full Stack</option>
+                  </select>
+                </div>
+              </CardHeader>
+
+              <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={topEmployees}>
+                  <BarChart data={topEmployees}  >
                     <CartesianGrid strokeDasharray="3 3" />
+                    <YAxis />
                     <XAxis dataKey="fullName" />
-                    <YAxis domain={[0, 100]} />
                     <Tooltip />
-                    <Bar dataKey="performanceMetrics.ProblemSolving" stroke="#A855F7" fill="#8884d8" />
+                    <Bar
+                      dataKey={selectedDomain}
+                      stroke="#A855F7"
+                      fill="#8884d8"
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
 
-            {/* Pie Chart for Job Performance Metrics */}
+           
             <Card className="col-span-1 md:col-span-3 w-1/3">
               <CardHeader>
-                <CardTitle>Training Domains</CardTitle>
+                <CardTitle>Average Domain Scores</CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={400}>
-                  <PieChart>
-                    <Pie
-                      data={jobPerformanceMetrics}
-                      dataKey="score"
-                      nameKey="metric"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={100}
-                    >
-                      {jobPerformanceMetrics.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
-                      ))}
-                    </Pie>
-                    <Tooltip content={<CustomTooltip />} />
-                    <Legend
-                      layout="vertical"
-                      verticalAlign="middle"
-                      align="right"
-                      wrapperStyle={{ color: "black" }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
+                <GenderRatioChart />
               </CardContent>
             </Card>
           </div>
 
-          {/* Employee Scores Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Employee Scores</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="font-bold text-center">Employee ID</TableHead>
-                    <TableHead className="font-bold text-center">Name</TableHead>
-                    <TableHead className="font-bold text-center">Email</TableHead>
-                    <TableHead className="font-bold text-center">Data Science Score</TableHead>
-                    <TableHead className="font-bold text-center">Full Stack Score</TableHead>
-                    <TableHead className="font-bold text-center">Data Engineering Score</TableHead>
-                    <TableHead className="font-bold text-center">Problem Solving Score</TableHead>
-                    <TableHead className="font-bold text-center">Leadership Score</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {employees.map((employee) => (
-                    <TableRow key={employee.id}>
-                      <TableCell className="text-center">{employee.id}</TableCell>
-                      <TableCell className="text-center">{employee.fullName}</TableCell>
-                      <TableCell className="text-center">{employee.email}</TableCell>
-                      <TableCell className="text-center">{employee.trainingScores.DataScience}</TableCell>
-                      <TableCell className="text-center">{employee.trainingScores.FullStack}</TableCell>
-                      <TableCell className="text-center">{employee.trainingScores.DataEngineering}</TableCell>
-                      <TableCell className="text-center">{employee.performanceMetrics.ProblemSolving}</TableCell>
-                      <TableCell className="text-center">{employee.performanceMetrics.Leadership}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+          <EmpTable />
         </main>
       </div>
     </div>

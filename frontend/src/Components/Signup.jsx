@@ -8,7 +8,7 @@ const Signup = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("EMPLOYEE"); // Set default role
+  const [role, setRole] = useState("EMPLOYEE"); 
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -16,32 +16,28 @@ const Signup = () => {
     e.preventDefault();
 
     try {
-      // Make the API call to register the user
+
       const response = await axios.post("http://localhost:5000/api/user/register", {
         firstName,
         lastName,
         email,
         password,
-        role // You can change this role based on the form data if needed
+        role 
       });
 
       if (response.status === 201) {
         console.log("User registered successfully", response.data);
-        navigate("/login"); // Redirect to login on successful registration
+        navigate("/login");
       }
     } catch (err) {
       if (err.response && err.response.data.message) {
-        setError(err.response.data.message); // Show error from backend
+        setError(err.response.data.message); 
       } else {
         setError("Something went wrong. Please try again.");
       }
     }
 
 
-
-
-
-    // navigate("/login");
   };
 
   return (

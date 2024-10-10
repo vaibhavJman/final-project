@@ -32,7 +32,7 @@ const GenderRatioChart = () => {
       case "Female":
         return "#82ca9d";
       default:
-        return "#000"; // fallback to black if name doesn't match
+        return "#000";
     }
   };
 
@@ -40,7 +40,7 @@ const GenderRatioChart = () => {
     // console.log(payload);
 
     if (active && payload && payload.length) {
-      const metricColor = getColor(payload[0].name); // Get the color for the corresponding metric
+      const metricColor = getColor(payload[0].name); 
       return (
         <div className="bg-gray-800 text-white rounded-lg p-2">
           <div className="flex items-center">

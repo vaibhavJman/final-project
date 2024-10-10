@@ -15,37 +15,35 @@ const Login = () => {
     e.preventDefault();
   
     try {
-      // Make an API call to the backend for login
       const response = await axios.post("http://localhost:5000/api/user/login", {
         email,
         password,
       });
   
-      // If login is successful, get the token and user from the response
       const { token, user } = response.data;
   
-      // Store the token in localStorage or sessionStorage
+     
       localStorage.setItem("token", token);
-      localStorage.setItem("userRole", user.role); // Store user role for future access
-      localStorage.setItem("userId", user.id); // Store user id for future access
+      localStorage.setItem("userRole", user.role); 
+      localStorage.setItem("userId", user.id); 
   
-      // Redirect based on user role
+      
       switch (user.role) {
         case "ADMIN":
-          navigate("/welcome"); // Redirect to admin dashboard
+          navigate("/welcome"); 
           break;
         case "TRAINER":
-          navigate("/trainer/dashboard"); // Redirect to trainer dashboard
+          navigate("/trainer/dashboard");
           break;
         case "EMPLOYEE":
-          navigate("/employee/dashboard"); // Redirect to employee dashboard
+          navigate("/employee/dashboard"); 
           break;
         default:
-          navigate("/welcome"); // Default redirect
+          navigate("/welcome"); 
       }
     } catch (err) {
       if (err.response && err.response.data.message) {
-        setError(err.response.data.message); // Show error from backend
+        setError(err.response.data.message); 
       } else {
         setError("Something went wrong. Please try again.");
       }

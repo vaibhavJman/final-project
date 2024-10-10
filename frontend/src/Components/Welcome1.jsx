@@ -1,4 +1,3 @@
-// src/Welcome.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './welcome.css'
@@ -8,14 +7,12 @@ const Welcome = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check session status
     const sessionStatus = sessionStorage.getItem('sessionStatus');
     if (sessionStatus !== 'active') {
       navigate('/login');
       return;
     }
 
-    // Retrieve user email from sessionStorage
     const email = sessionStorage.getItem('userEmail');
     if (email) {
       setUserEmail(email);
@@ -25,7 +22,6 @@ const Welcome = () => {
   }, [navigate]);
 
   const handleLogout = () => {
-    // Clear session status and user email
     sessionStorage.removeItem('sessionStatus');
     sessionStorage.removeItem('userEmail');
     navigate('/login');

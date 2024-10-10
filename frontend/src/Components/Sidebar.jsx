@@ -1,5 +1,5 @@
 // Sidebar.jsx
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
 import {
     ChevronRight,
     Layout,
@@ -14,7 +14,7 @@ import { GrDocumentPerformance } from "react-icons/gr";
 import { PiExamFill } from "react-icons/pi";
 
 const Sidebar = ({ activeNav, setActiveNav }) => {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate(); 
 
   return (
     <aside className="hidden md:flex flex-col w-64 bg-white border-r">
@@ -23,10 +23,10 @@ const Sidebar = ({ activeNav, setActiveNav }) => {
       </div>
       <nav className="flex-grow">
         {[
-          { name: "Dashboard", icon: MdDashboard, path: "/welcome" }, // Adjusted path
+          { name: "Dashboard", icon: MdDashboard, path: "/welcome" },
           { name: "Trainers", icon: BsPeopleFill, path: "/trainers" },
-          { name: "Trainings", icon: PiExamFill , path: "/training" }, // Example path for Score
-          // { name: "Performance", icon: GrDocumentPerformance, path: "/performance" }, // Example path for Performance
+          { name: "Trainings", icon: PiExamFill , path: "/training" }, 
+         
         ].map((item) => (
           <button
             key={item.name}
@@ -37,7 +37,7 @@ const Sidebar = ({ activeNav, setActiveNav }) => {
             }`}
             onClick={() => {
               setActiveNav(item.name.toLowerCase());
-              navigate(item.path); // Navigate to the specified path
+              navigate(item.path); 
             }}
           >
             <item.icon className="w-5 h-5 mr-3" />

@@ -11,7 +11,7 @@ import {
 import Sidebar from "./Sidebar";
 import { IoMdSettings } from "react-icons/io";
 import { FaBell } from "react-icons/fa";
-import { BiUser, BiUserCheck, BiChalkboard } from "react-icons/bi"; // Importing icons
+import { BiUser, BiUserCheck, BiChalkboard } from "react-icons/bi"; 
 import { FaUsers } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,7 +31,7 @@ export default function Dashboard() {
   const [activeNav, setActiveNav] = useState("dashboard");
   const [selectedDomain, setSelectedDomain] = useState("MACHINE_LEARNING");
   const [topEmployees, setTopEmployees] = useState([]);
-  const [employeeCountSelection, setEmployeeCountSelection] = useState(5); // Default to Top 5
+  const [employeeCountSelection, setEmployeeCountSelection] = useState(5); 
 
 
   const [employeeCount, setEmployeeCount] = useState(0);
@@ -71,10 +71,10 @@ export default function Dashboard() {
       .then((data) => {
         const sortedEmployees = data
           .sort((a, b) => b[selectedDomain] - a[selectedDomain])
-          .slice(0, employeeCountSelection); // Use the selected count here
+          .slice(0, employeeCountSelection); 
         setTopEmployees(sortedEmployees);
       });
-  }, [selectedDomain, employeeCountSelection]); // Add employeeCountSelection as a dependency
+  }, [selectedDomain, employeeCountSelection]); 
   
 
   const handleLogout = () => {
@@ -120,7 +120,7 @@ export default function Dashboard() {
         </header>
 
         <main className="flex-1 overflow-x-hidden overflow-y-auto p-6">
-          {/* KPI Cards */}
+       
           <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
             <Card className="shadow-lg transition-transform duration-300 transform hover:scale-105 bg-blue-100">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -160,7 +160,7 @@ export default function Dashboard() {
             </Card>
           </div>
 
-          {/* Charts Section */}
+         
           <div className="flex gap-8 mb-8">
             <Card className="col-span-1 md:col-span-3 w-2/3">
               <CardHeader className="flex items-center">
@@ -224,7 +224,7 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* Pie Chart for Average Domain Scores */}
+           
             <Card className="col-span-1 md:col-span-3 w-1/3">
               <CardHeader>
                 <CardTitle>Average Domain Scores</CardTitle>

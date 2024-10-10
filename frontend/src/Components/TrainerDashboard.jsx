@@ -36,8 +36,11 @@ const TrainerDashboard = () => {
     <div className="flex min-h-screen">
       {/* <Sidebar activeNav={activeNav} setActiveNav={setActiveNav} /> */}
 
+
+
+
+
       <div className="flex-grow p-6 bg-gray-100">
-        {/* Display Employees and Their Scores */}
         {trainings.length > 0 && (
           <Card className="mt-4">
 
@@ -47,7 +50,7 @@ const TrainerDashboard = () => {
                   <h3 className="text-lg font-semibold mb-10">Employees Enrolled in {training.name.toLowerCase().replace("_"," ")}</h3>
                   <Table>
                     <TableHeader>
-                      <TableRow  className="h-[50px] text-center">
+                      <TableRow  className="h-[70px] text-center">
                         <TableHead className="font-bold text-center">
                           Employee ID
                         </TableHead>
@@ -64,7 +67,7 @@ const TrainerDashboard = () => {
                     </TableHeader>
                     <TableBody>
                       {training.assignedEmployees.map((employee) => (
-                        <TableRow key={employee.employeeId}>
+                        <TableRow key={employee.employeeId} className="h-[50px] text-center">
                           <TableCell className="text-center">
                             {employee.employeeId}
                           </TableCell>
