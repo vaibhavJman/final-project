@@ -164,7 +164,7 @@ const Trainers = () => {
                   {editTrainerIndex !== null ? "edit" : "add"} the trainer.
                 </DialogDescription>
                 <div className="space-y-4">
-                  {/* Input Fields */}
+        
                   <div>
                     <Label htmlFor="firstName">First Name</Label>
                     <Input
@@ -286,14 +286,16 @@ const Trainers = () => {
                     <TableCell className="text-center px-6 py-3 min-w-[150px]">
                       {trainer.email}
                     </TableCell>
+
                     <TableCell className="text-center px-6 py-3 min-w-[150px]">
                       {Array.isArray(trainer.trainingsAssignedtoTrainers) &&
                       trainer.trainingsAssignedtoTrainers.length > 0
                         ? trainer.trainingsAssignedtoTrainers
                             .map((item) => item.name)
-                            .join(", ")
+                            .join(", ").replace("_"," ")
                         : "-"}
                     </TableCell>
+
                     <TableCell className="text-center px-6 py-3 min-w-[150px]">
                       {Array.isArray(trainer.trainingsAssignedtoTrainers) &&
                       trainer.trainingsAssignedtoTrainers.length > 0

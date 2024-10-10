@@ -42,7 +42,7 @@ const Training = () => {
       <div className="flex-grow p-6 bg-gray-100">
         <Card>
           <CardHeader>
-            <CardTitle>Trainings</CardTitle>
+            <CardTitle>Trainings List</CardTitle>
             {/* Search Input */}
             <div className="mt-4">
               <input
@@ -73,10 +73,10 @@ const Training = () => {
                       {training.id}
                     </TableCell>
                     <TableCell className="font-medium text-center px-6 py-3 min-w-[150px]">
-                      {training.name}
+                      {training.name.replace("_"," ")}
                     </TableCell>
                     <TableCell className="text-center px-6 py-3 min-w-[150px]">
-                      {training.domainName}
+                      {training.domainName.replace("_"," ")}
                     </TableCell>
                     <TableCell className="text-center px-6 py-3 min-w-[150px]">
                       {new Date(training.startDate).toLocaleDateString()}

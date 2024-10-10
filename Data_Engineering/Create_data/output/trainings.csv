@@ -1,0 +1,21 @@
+id,name,description,startDate,endDate,domainId,trainerId
+1,MACHINE_LEARNING Training 243,This training focuses on MACHINE_LEARNING skills and knowledge.,2024-05-31,2024-07-04,2,92
+2,FULL_STACK Training 940,This training focuses on FULL_STACK skills and knowledge.,2024-06-09,2024-06-28,3,11
+3,FULL_STACK Training 642,This training focuses on FULL_STACK skills and knowledge.,2024-05-17,2024-07-08,3,102
+4,MACHINE_LEARNING Training 723,This training focuses on MACHINE_LEARNING skills and knowledge.,2024-03-15,2024-04-08,2,90
+5,DATA_ENGINEERING Training 690,This training focuses on DATA_ENGINEERING skills and knowledge.,2024-01-05,2024-01-26,1,42
+6,DATA_ENGINEERING Training 179,This training focuses on DATA_ENGINEERING skills and knowledge.,2024-03-03,2024-04-13,1,73
+7,DATA_ENGINEERING Training 807,This training focuses on DATA_ENGINEERING skills and knowledge.,2024-09-13,2024-09-24,1,109
+8,MACHINE_LEARNING Training 174,This training focuses on MACHINE_LEARNING skills and knowledge.,2024-08-17,2024-10-11,2,84
+9,FULL_STACK Training 711,This training focuses on FULL_STACK skills and knowledge.,2024-04-19,2024-05-03,3,63
+10,MACHINE_LEARNING Training 83,This training focuses on MACHINE_LEARNING skills and knowledge.,2024-02-17,2024-03-07,2,106
+11,MACHINE_LEARNING Training 5,This training focuses on MACHINE_LEARNING skills and knowledge.,2024-04-23,2024-06-14,2,39
+12,DATA_ENGINEERING Training 77,This training focuses on DATA_ENGINEERING skills and knowledge.,2024-09-16,2024-10-08,1,13
+13,DATA_ENGINEERING Training 34,This training focuses on DATA_ENGINEERING skills and knowledge.,2024-09-10,2024-09-23,1,21
+14,FULL_STACK Training 79,This training focuses on FULL_STACK skills and knowledge.,2024-02-26,2024-03-19,3,40
+15,DATA_ENGINEERING Training 702,This training focuses on DATA_ENGINEERING skills and knowledge.,2024-06-07,2024-06-25,1,101
+16,MACHINE_LEARNING Training 549,This training focuses on MACHINE_LEARNING skills and knowledge.,2024-01-26,2024-02-08,2,41
+17,MACHINE_LEARNING Training 408,This training focuses on MACHINE_LEARNING skills and knowledge.,2024-03-06,2024-05-05,2,84
+18,MACHINE_LEARNING Training 262,This training focuses on MACHINE_LEARNING skills and knowledge.,2024-03-09,2024-03-20,2,72
+19,DATA_ENGINEERING Training 172,This training focuses on DATA_ENGINEERING skills and knowledge.,2024-02-08,2024-02-18,1,20
+20,MACHINE_LEARNING Training 62,This training focuses on MACHINE_LEARNING skills and knowledge.,2024-06-06,2024-07-14,2,98
