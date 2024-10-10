@@ -7,6 +7,7 @@ const Signup = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [gender, setGender] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("EMPLOYEE"); 
   const [error, setError] = useState("");
@@ -22,7 +23,8 @@ const Signup = () => {
         lastName,
         email,
         password,
-        role 
+        role,
+        gender
       });
 
       if (response.status === 201) {
@@ -84,6 +86,17 @@ const Signup = () => {
                   required
                 />
               </div>
+
+              <div>
+                <label>Gender:</label>
+                <input
+                  type="text"
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  required
+                />
+              </div>
+
               <div>
                 <label>Password:</label>
                 <input

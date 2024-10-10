@@ -7,8 +7,7 @@ const prisma = new PrismaClient();
 
 // Register a new user
 const registerUser = async (req, res) => {
-
-  const { firstName, lastName, email, password, role } = req.body;
+  const { firstName, lastName, email, password, role, gender } = req.body;
 
   const existingUser = await prisma.user.findUnique({ where: { email } });
 
@@ -25,6 +24,7 @@ const registerUser = async (req, res) => {
       email,
       password: hashedPassword,
       role,
+      gender,
     },
   });
 
@@ -34,7 +34,7 @@ const registerUser = async (req, res) => {
 // User login
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
-console.log(req.body)
+  console.log(req.body);
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
     return res.status(404).json({ message: "User not found" });
