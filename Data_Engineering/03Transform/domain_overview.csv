@@ -1,0 +1,4 @@
+domainId,domainName,training_count,avg_duration,longest_training,shortest_traning
+1,Data Engineering,13,37.0,60,11
+2,Machine Learning,24,35.0,59,13
+3,Full Stack,13,36.0,53,19
