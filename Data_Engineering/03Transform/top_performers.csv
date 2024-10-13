@@ -1,6 +1,6 @@
-employeeId,average_score,No_of_Trainings,performance
-4417,98.0,3,Excellent
-7251,97.67,3,Excellent
-4544,96.67,3,Excellent
-6042,96.33,3,Excellent
-1527,96.33,3,Excellent
+employeeId,average_score,training_completed,performance
+10040,98.0,3,Excellent
+7694,97.0,3,Excellent
+8072,96.33,3,Excellent
+969,96.33,3,Excellent
+5497,96.0,3,Excellent
