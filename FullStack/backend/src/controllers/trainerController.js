@@ -14,17 +14,38 @@ const getTrainersByID = async (req, res) => {
     where: {
       trainerId: trainerId,
     },
-    include: {
+    select: {
       assignedEmployees: {
         include:{
           employee: true
         }
       }, 
       scores: true,
-      domain: true
+      domain: true,
+      name:true
     },
   });
+  // console.log(trainings)
   res.json(trainings);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+
+const updateEmployeeScore = async (req, res) => {
+  try {
+    const { scoreId } = req.params;
+    const { value } = req.body;
+
+    const updatedScore = await prisma.score.update({
+      where: { id: parseInt(scoreId, 10) },
+      data: { value: parseFloat(value) },
+    });
+
+    res.json(updatedScore);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -32,4 +53,5 @@ const getTrainersByID = async (req, res) => {
 
 module.exports = {
   getTrainersByID,
+  updateEmployeeScore
 };
