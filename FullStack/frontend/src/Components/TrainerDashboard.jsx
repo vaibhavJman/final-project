@@ -29,9 +29,16 @@ const TrainerDashboard = () => {
 
   useEffect(() => {
     const fetchTrainings = async () => {
+      const token = localStorage.getItem("token"); 
+
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/trainer/trainings/${userId}`
+          `http://localhost:5000/api/trainer/trainings/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, 
+            },
+          }
         );
         setTrainings(response.data);
       } catch (error) {
@@ -48,6 +55,10 @@ const TrainerDashboard = () => {
     window.location.href = "/login";
   };
 
+
+
+
+  
   return (
 
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -110,8 +121,14 @@ const TrainerDashboard = () => {
                           <TableHead className="font-bold text-center">
                             Score
                           </TableHead>
+                          <TableHead className="font-bold text-center">
+                            Domain
+                          </TableHead>
                         </TableRow>
                       </TableHeader>
+
+
+                      
                       <TableBody>
                         {training.assignedEmployees.map((employee) => (
                           <TableRow
@@ -128,12 +145,21 @@ const TrainerDashboard = () => {
                             <TableCell className="text-center">
                               {employee.employee.email}
                             </TableCell>
+
+
+
                             <TableCell className="text-center">
                               {training.scores.find(
                                 (score) =>
                                   score.employeeId === employee.employeeId
                               )?.value || "No Score"}
                             </TableCell>
+                            <TableCell className="text-center">
+                              {training.domain.name.toLowerCase().replace("_", " ")}
+                            </TableCell>
+
+
+
                           </TableRow>
                         ))}
                       </TableBody>

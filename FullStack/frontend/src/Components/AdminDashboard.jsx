@@ -65,7 +65,6 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    // Fetch data from the API
     fetch("http://localhost:5000/api/admin/table")
       .then((response) => response.json())
       .then((data) => {

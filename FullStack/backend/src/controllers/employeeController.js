@@ -81,27 +81,6 @@ const getAllTrainers = async (req, res) => {
   }
 };
 
-// const getALLscore = async (req, res) => {
-//   try{
-//     const scores = await prisma.score.groupBy({
-//       by : ["employeeId"],
-//       _avg: {
-//         value: true
-//       },
-//       orderBy: {
-//         _avg: "desc"
-//       }
-//     })
-//     res.json(scores);
-//   }catch(error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// }
-
-// const getHello = async (req, res) => {
-//   res.json("Hello There")
-// }
-
 
 
 const getAllTrainings = async (req, res)=>{
@@ -116,7 +95,7 @@ const getAllTrainings = async (req, res)=>{
         },
         assignedEmployees: {
           select: {
-            employeeId: true, // Get employee ID
+            employeeId: true, 
           },
         },
         domain: true
@@ -126,9 +105,9 @@ const getAllTrainings = async (req, res)=>{
     const formattedTrainings = trainings.map(training => ({
       id: training.id,
       name: training.name,
-      domainName: training.domain.name, // Assuming you have a domain relation set
+      domainName: training.domain.name, 
       startDate: training.startDate,
-      assignedEmployees: training.assignedEmployees.length, // Count of assigned employees
+      assignedEmployees: training.assignedEmployees.length, 
       trainerName: training.trainer ? `${training.trainer.firstName} ${training.trainer.lastName}` : 'N/A',
     }));
 
@@ -151,5 +130,5 @@ module.exports = {
   getTrainingCount,
   getAllTrainers,
   getAllTrainings,
-  // getALLscore
+ 
 };

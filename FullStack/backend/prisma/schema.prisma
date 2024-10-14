@@ -9,6 +9,12 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
+
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
+
 model User {
   id                          Int                  @id @default(autoincrement())
   firstName                   String

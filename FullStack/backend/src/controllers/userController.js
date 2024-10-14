@@ -1,4 +1,4 @@
-// userController.js
+
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
@@ -50,6 +50,8 @@ const loginUser = async (req, res) => {
     process.env.JWT_SECRET,
     { expiresIn: "1h" }
   );
+
+
 
   res.json({
     token,
