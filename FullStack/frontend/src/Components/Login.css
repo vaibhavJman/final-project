@@ -7,7 +7,11 @@
     /* background: rgba(111, 0, 255, 0.9); */
     /* background-color: #ececec; */
 
-    background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(75, 14, 154, 1) 35%, rgba(0, 212, 255, 1) 100%);
+    /* background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(75, 14, 154, 1) 35%, rgba(0, 212, 255, 1) 100%); */
+    background: rgb(221,138,251);
+    background: radial-gradient(circle, rgba(221,138,251,1) 0%, rgb(0, 77, 172) 100%);
+    
+    /* background-color: #fff; */
     padding: 0 20px 0 20px;
 
 }
@@ -160,8 +164,6 @@ input {
     text-decoration: underline;
     color: #000;
 }
-
-
 
 
 .error-message {

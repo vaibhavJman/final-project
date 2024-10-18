@@ -85,16 +85,16 @@ const Login = () => {
                 />
               </div>
 
-              <button className="submit" type="submit">
-                Login
-              </button>
-
               {/* {error && <p style={{ color: "red" }}>{error}</p>} */}
               {error && (
                 <div className="error-message">
                   <span className="error-icon">⚠️</span> {error}
                 </div>
               )}
+              <button className="submit" type="submit">
+                Login
+              </button>
+
 
               <div className="signup">
                 <p>
