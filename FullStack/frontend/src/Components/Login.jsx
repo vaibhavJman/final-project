@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import axios from "axios";
 
-
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,37 +12,38 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-  
+
     try {
-      const response = await axios.post("http://localhost:5000/api/user/login", {
-        email,
-        password,
-      });
-  
+      const response = await axios.post(
+        "http://localhost:5000/api/user/login",
+        {
+          email,
+          password,
+        }
+      );
+
       const { token, user } = response.data;
-  
-     
+
       localStorage.setItem("token", token);
-      localStorage.setItem("userRole", user.role); 
-      localStorage.setItem("userId", user.id); 
-  
-      
+      localStorage.setItem("userRole", user.role);
+      localStorage.setItem("userId", user.id);
+
       switch (user.role) {
         case "ADMIN":
-          navigate("/welcome"); 
+          navigate("/welcome");
           break;
         case "TRAINER":
           navigate("/trainer/dashboard");
           break;
         case "EMPLOYEE":
-          navigate("/employee/dashboard"); 
+          navigate("/employee/dashboard");
           break;
         default:
-          navigate("/welcome"); 
+          navigate("/welcome");
       }
     } catch (err) {
       if (err.response && err.response.data.message) {
-        setError(err.response.data.message); 
+        setError(err.response.data.message);
       } else {
         setError("Something went wrong. Please try again.");
       }
@@ -89,7 +89,12 @@ const Login = () => {
                 Login
               </button>
 
-              {error && <p style={{ color: "red" }}>{error}</p>}
+              {/* {error && <p style={{ color: "red" }}>{error}</p>} */}
+              {error && (
+                <div className="error-message">
+                  <span className="error-icon">⚠️</span> {error}
+                </div>
+              )}
 
               <div className="signup">
                 <p>

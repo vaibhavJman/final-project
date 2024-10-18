@@ -102,7 +102,7 @@ const TrainerDashboard = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setTrainings((prev) =>
+      setTrainings((prev)  =>
         prev.map((training) => ({
           ...training,
           scores: training.scores.map((score) =>

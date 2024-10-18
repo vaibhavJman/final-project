@@ -155,3 +155,28 @@ input {
     text-decoration: underline;
     color: #000;
 }
+
+
+
+/* Error message */
+.error-message {
+    display: flex;
+    align-items: center;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+  
+  .error-icon {
+    margin-right: 8px;
+    font-size: 18px;
+  }
+  
+  .input-box .error-message {
+    animation: shake 0.3s ease-in-out;
+  }
