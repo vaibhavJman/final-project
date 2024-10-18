@@ -24,8 +24,8 @@
 .row {
     display:flex;
     flex-direction: row;
-    width: 900px;
-    height: 550px;
+    width: 50%;
+    /* height: 550px; */
     border-radius: 10px;
     background-color: #fff;
     box-shadow: 5px 5px 10px 1px rgba(0, 0, 0, 0.2);
@@ -73,7 +73,9 @@ i {
     justify-content: center;
     align-items: center;
     flex: 1;
+    padding:40px 0;
     position: relative;
+
 }
 
 
@@ -81,12 +83,15 @@ i {
     width: 330px;
     box-sizing: border-box;
 }
+.input-box div{
+    margin-bottom:10px;
+}
 
 .input-box header {
     font-size: 30px;
     font-weight: 700;
     text-align: center;
-    margin-bottom: 45px;
+    margin-bottom: 35px;
 }
 
 
@@ -158,25 +163,29 @@ input {
 
 
 
-/* Error message */
+
 .error-message {
-    display: flex;
-    align-items: center;
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-    border-radius: 5px;
-    padding: 10px;
-    margin-top: 10px;
-    font-size: 14px;
-    transition: all 0.3s ease;
-  }
-  
-  .error-icon {
-    margin-right: 8px;
-    font-size: 18px;
-  }
-  
-  .input-box .error-message {
+    color: red;
+    font-size: 13px;
+    margin-top: 5px;
+    padding: 0;
+    line-height: 1.2;
+}
+
+
+.input-box {
+    width: 330px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+.input-box .error-message {
     animation: shake 0.3s ease-in-out;
-  }
+}

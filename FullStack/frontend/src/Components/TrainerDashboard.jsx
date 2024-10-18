@@ -117,7 +117,7 @@ const TrainerDashboard = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
+    <div className="flex-1 flex flex-col overflow-hidden min-h-screen">
       {/* Header Bar */}
       <header className="flex items-center justify-between px-6 py-2 bg-white border-b">
         <h2 className="text-xl font-semibold">Trainer Dashboard</h2>
