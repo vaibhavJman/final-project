@@ -15,7 +15,7 @@ import { MdAssignmentTurnedIn } from "react-icons/md";
 import { FaBell } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
+import CardComponent from "./CardComponent";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,14 +29,15 @@ import axios from "axios";
 const TrainerDashboard = () => {
   const [trainings, setTrainings] = useState([]);
   const [editing, setEditing] = useState({ scoreId: null, value: "" });
-  const userId = localStorage.getItem("userId");
   const [employeeCount, setEmployeeCount] = useState(0);
   const [adminCount, setAdminCount] = useState(0);
   const [trainerCount, setTrainerCount] = useState(0);
   const [trainingCount, setTrainingCount] = useState(0);
 
+  const [isLoad, setisLoad] = useState(true);
+  const userId = localStorage.getItem("userId");
+
   useEffect(() => {
-    // Fetch data for counts
     const fetchCounts = async () => {
       const [employeeRes, adminRes, trainerRes, trainingRes] =
         await Promise.all([
@@ -73,8 +74,8 @@ const TrainerDashboard = () => {
             },
           }
         );
-        console.log(response.data[0].name);
         setTrainings(response.data);
+        setisLoad(false);
       } catch (error) {
         console.error("Error fetching trainings:", error);
       }
@@ -102,7 +103,7 @@ const TrainerDashboard = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setTrainings((prev)  =>
+      setTrainings((prev) =>
         prev.map((training) => ({
           ...training,
           scores: training.scores.map((score) =>
@@ -110,15 +111,18 @@ const TrainerDashboard = () => {
           ),
         }))
       );
-      setEditing({ scoreId: null, value: "" }); // Reset editing state
+      setEditing({ scoreId: null, value: "" });
     } catch (error) {
       console.error("Error updating score:", error);
     }
   };
 
+  if (isLoad) {
+    return <h1>Loading.....</h1>;
+  }
+
   return (
     <div className="flex-1 flex flex-col overflow-hidden min-h-screen">
-      {/* Header Bar */}
       <header className="flex items-center justify-between px-6 py-2 bg-white border-b">
         <h2 className="text-xl font-semibold">Trainer Dashboard</h2>
         <div className="flex items-center">
@@ -148,58 +152,54 @@ const TrainerDashboard = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="flex-grow p-6 bg-gray-100">
         <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="shadow-lg transition-transform duration-300 transform hover:scale-105 bg-red-100">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <MdAssignmentTurnedIn className="text-5xl text-red-600" />
-              <CardTitle className="text-lg">
-                {trainings.map((training) =>
-                  training.name.toLowerCase().replace("_", " ")
-                )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-xs text-gray-700">Assigned Training</div>
-            </CardContent>
-          </Card>
-          <Card className="shadow-lg transition-transform duration-300 transform hover:scale-105 bg-blue-100">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <BiUser className="text-5xl text-blue-600" />
-              <CardTitle className="text-4xl">{employeeCount}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-xs text-gray-700">Total Employees</div>
-            </CardContent>
-          </Card>
-          <Card className="shadow-lg transition-transform duration-300 transform hover:scale-105 bg-green-100">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <BiUserCheck className="text-5xl text-green-600" />
-              <CardTitle className="text-4xl">{adminCount}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-xs text-gray-700">Total Admins</div>
-            </CardContent>
-          </Card>
-          <Card className="shadow-lg transition-transform duration-300 transform hover:scale-105 bg-orange-100">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <FaUsers className="text-5xl text-orange-600" />
-              <CardTitle className="text-4xl">{trainerCount}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-xs text-gray-700">Total Trainers</div>
-            </CardContent>
-          </Card>
-          <Card className="shadow-lg transition-transform duration-300 transform hover:scale-105 bg-purple-100">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <BiChalkboard className="text-5xl text-purple-600" />
-              <CardTitle className="text-4xl">{trainingCount}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-xs text-gray-700">Total Trainings</div>
-            </CardContent>
-          </Card>
+          <CardComponent
+            bgColor="bg-red-100"
+            icon={MdAssignmentTurnedIn}
+            iconColor="text-red-600"
+            titleSize="text-lg"
+            value={trainings[0].name.toLowerCase().replace("_", " ")}
+            description="Assigned Training"
+          />
+
+          <CardComponent
+            bgColor="bg-blue-100"
+            icon={BiUser}
+            titleSize="text-4xl"
+            iconColor="text-blue-600"
+            title="Employees"
+            value={employeeCount}
+            description="Total Employees"
+          />
+
+          <CardComponent
+            bgColor="bg-green-100"
+            icon={BiUserCheck}
+            titleSize="text-4xl"
+            iconColor="text-green-600"
+            title="Admins"
+            value={adminCount}
+            description="Total Admins"
+          />
+          <CardComponent
+            bgColor="bg-orange-100"
+            icon={FaUsers}
+            titleSize="text-4xl"
+            iconColor="text-orange-600"
+            title="Trainers"
+            value={trainerCount}
+            description="Total Trainers"
+          />
+          <CardComponent
+            bgColor="bg-purple-100"
+            icon={BiChalkboard}
+            titleSize="text-4xl"
+            iconColor="text-purple-600"
+            title="Trainings"
+            value={trainingCount}
+            description="Total Trainings"
+          />
         </div>
 
         {trainings.map((training) => (
@@ -231,6 +231,7 @@ const TrainerDashboard = () => {
                           {emp.employee.firstName} {emp.employee.lastName}
                         </TableCell>
                         <TableCell>{emp.employee.email}</TableCell>
+
                         <TableCell>
                           {editing.scoreId === score?.id ? (
                             <input
@@ -248,14 +249,32 @@ const TrainerDashboard = () => {
                             score?.value || "No Score"
                           )}
                         </TableCell>
+
                         <TableCell>
                           {editing.scoreId === score?.id ? (
-                            <Button
-                              onClick={() => handleSave(score.id)}
-                              variant="primary"
-                            >
-                              Save
-                            </Button>
+                            // <Button
+                            //   onClick={() => handleSave(score.id)}
+                            //   variant="primary"
+                            // >
+                            //   Save
+                            // </Button>
+                            <>
+                              <Button
+                                onClick={() => handleSave(score.id)}
+                                variant="primary"
+                              >
+                                Save
+                              </Button>
+                              <Button
+                                onClick={() =>
+                                  setEditing({ scoreId: null, value: "" })
+                                }
+                                variant="secondary"
+                                // className="ml-2"
+                              >
+                                Cancel
+                              </Button>
+                            </>
                           ) : (
                             <Button
                               onClick={() =>

@@ -1,11 +1,9 @@
-
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-// Register a new user
 const registerUser = async (req, res) => {
   const { firstName, lastName, email, password, role, gender } = req.body;
 
@@ -31,10 +29,9 @@ const registerUser = async (req, res) => {
   res.status(201).json({ message: "User registered successfully", user });
 };
 
-// User login
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
-  console.log(req.body);
+  // console.log(req.body);
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
     return res.status(404).json({ message: "User not found" });
@@ -48,10 +45,8 @@ const loginUser = async (req, res) => {
   const token = jwt.sign(
     { userId: user.id, role: user.role },
     process.env.JWT_SECRET,
-    { expiresIn: "1h" }
+    { expiresIn: "24h" }
   );
-
-
 
   res.json({
     token,

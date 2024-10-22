@@ -1,32 +1,25 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell,} from "@/components/ui/table";
 import Sidebar from "@/components/Sidebar";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogFooter,} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { IoMdSettings } from "react-icons/io";
+import { FaBell } from "react-icons/fa";
+
+
 
 const Trainers = () => {
   const [activeNav, setActiveNav] = useState("trainers");
@@ -36,7 +29,7 @@ const Trainers = () => {
   const [newTrainer, setNewTrainer] = useState({
     firstName: "",
     lastName: "",
-    email: "",
+    // email: "",
     expertise: "",
     trainingName: "",
   });
@@ -69,7 +62,7 @@ const Trainers = () => {
       id,
       fullName,
       email: newTrainer.email,
-      expertise: newTrainer.expertise,
+      // expertise: newTrainer.expertise,
       trainingName: newTrainer.trainingName,
     };
 
@@ -87,7 +80,7 @@ const Trainers = () => {
       firstName: "",
       lastName: "",
       email: "",
-      expertise: "",
+      // expertise: "",
       trainingName: "",
     });
   };
@@ -97,7 +90,7 @@ const Trainers = () => {
       firstName: "",
       lastName: "",
       email: "",
-      expertise: "",
+      // expertise: "",
       trainingName: "",
     });
     setEditTrainerIndex(null);
@@ -111,7 +104,7 @@ const Trainers = () => {
       firstName,
       lastName,
       email: trainer.email,
-      expertise: trainer.expertise,
+      // expertise: trainer.expertise,
       trainingName: trainer.trainingName,
     });
     setEditTrainerIndex(index);
@@ -133,12 +126,55 @@ const Trainers = () => {
     return true;
   });
 
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userRole");
+    window.location.href = "/login";
+  };
+
+
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar activeNav={activeNav} setActiveNav={setActiveNav} />
 
-      <div className="flex-grow p-6">
-        <Card>
+      <div className="flex-grow">
+
+      <header className="flex items-center justify-between px-6 py-2 bg-white border-b">
+          <h2 className="text-xl font-semibold">Admin Dashboard</h2>
+          <div className="flex items-center">
+            <Button variant="ghost" size="icon">
+              <FaBell className="h-5 w-5" />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Avatar className="ml-4">
+                  <AvatarImage
+                    src="/placeholder.svg?height=32&width=32"
+                    alt="User"
+                  />
+                  <AvatarFallback>JD</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => console.log("View Profile")}>
+                  <IoMdSettings className="mr-2" />
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </header>
+
+
+
+        <Card className="m-6">
           <CardHeader className="flex justify-between items-start">
             <div>
               <CardTitle>Trainers List</CardTitle>
@@ -195,7 +231,7 @@ const Trainers = () => {
                       placeholder="Email"
                     />
                   </div>
-                  <div>
+                  {/* <div>
                     <Label htmlFor="expertise">Expertise</Label>
                     <Input
                       id="expertise"
@@ -204,7 +240,7 @@ const Trainers = () => {
                       onChange={handleInputChange}
                       placeholder="Expertise"
                     />
-                  </div>
+                  </div> */}
                   <div>
                     <Label htmlFor="trainingName">Training Name</Label>
                     <Select

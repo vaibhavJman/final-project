@@ -1,12 +1,6 @@
 // Sidebar.jsx
-import { useNavigate } from 'react-router-dom'; 
-import {
-    ChevronRight,
-    Layout,
-    Users,
-    BarChart as BarChartIcon,
-    FileText,
-} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
 
 import { MdDashboard } from "react-icons/md";
 import { BsPeopleFill } from "react-icons/bs";
@@ -14,7 +8,7 @@ import { GrDocumentPerformance } from "react-icons/gr";
 import { PiExamFill } from "react-icons/pi";
 
 const Sidebar = ({ activeNav, setActiveNav }) => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   return (
     <aside className="hidden md:flex flex-col w-64 bg-white border-r">
@@ -25,8 +19,7 @@ const Sidebar = ({ activeNav, setActiveNav }) => {
         {[
           { name: "Dashboard", icon: MdDashboard, path: "/welcome" },
           { name: "Trainers", icon: BsPeopleFill, path: "/trainers" },
-          { name: "Trainings", icon: PiExamFill , path: "/training" }, 
-         
+          { name: "Trainings", icon: PiExamFill, path: "/training" },
         ].map((item) => (
           <button
             key={item.name}
@@ -37,7 +30,7 @@ const Sidebar = ({ activeNav, setActiveNav }) => {
             }`}
             onClick={() => {
               setActiveNav(item.name.toLowerCase());
-              navigate(item.path); 
+              navigate(item.path);
             }}
           >
             <item.icon className="w-5 h-5 mr-3" />

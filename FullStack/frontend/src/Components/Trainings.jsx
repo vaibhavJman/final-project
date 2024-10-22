@@ -1,5 +1,19 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { FaBell } from "react-icons/fa";
+import { FaUsers } from "react-icons/fa";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { IoMdSettings } from "react-icons/io";
+
 import {
   Table,
   TableHeader,
@@ -35,12 +49,51 @@ const Training = () => {
     );
   });
 
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userRole");
+    window.location.href = "/login";
+  };
+
   return (
     <div className="flex min-h-screen">
       <Sidebar activeNav={activeNav} setActiveNav={setActiveNav} />
 
-      <div className="flex-grow p-6 bg-gray-100">
-        <Card>
+      <div className="flex-grow  bg-gray-100">
+
+      <header className="flex items-center justify-between px-6 py-2 bg-white border-b">
+          <h2 className="text-xl font-semibold">Admin Dashboard</h2>
+          <div className="flex items-center">
+            <Button variant="ghost" size="icon">
+              <FaBell className="h-5 w-5" />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Avatar className="ml-4">
+                  <AvatarImage
+                    src="/placeholder.svg?height=32&width=32"
+                    alt="User"
+                  />
+                  <AvatarFallback>JD</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => console.log("View Profile")}>
+                  <IoMdSettings className="mr-2" />
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </header>
+
+        <Card className="m-6">
           <CardHeader>
             <CardTitle>Trainings List</CardTitle>
             {/* Search Input */}
