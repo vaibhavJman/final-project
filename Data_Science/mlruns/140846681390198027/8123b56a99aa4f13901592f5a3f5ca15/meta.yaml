@@ -1,0 +1,15 @@
+artifact_uri: file:///c:/Assessments/final_project/Data_Science/mlruns/140846681390198027/8123b56a99aa4f13901592f5a3f5ca15/artifacts
+end_time: 1730094906475
+entry_point_name: ''
+experiment_id: '140846681390198027'
+lifecycle_stage: active
+run_id: 8123b56a99aa4f13901592f5a3f5ca15
+run_name: capable-horse-408
+run_uuid: 8123b56a99aa4f13901592f5a3f5ca15
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1730094906275
+status: 4
+tags: []
+user_id: VaibhavAgarwal

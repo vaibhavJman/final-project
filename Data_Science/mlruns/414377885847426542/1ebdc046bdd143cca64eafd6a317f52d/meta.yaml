@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/414377885847426542/1ebdc046bdd143cca64eafd6a317f52d/artifacts
+end_time: 1730099314647
+entry_point_name: ''
+experiment_id: '414377885847426542'
+lifecycle_stage: active
+run_id: 1ebdc046bdd143cca64eafd6a317f52d
+run_name: Random Forest Classifier
+run_uuid: 1ebdc046bdd143cca64eafd6a317f52d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1730099299640
+status: 3
+tags: []
+user_id: VaibhavAgarwal

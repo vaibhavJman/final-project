@@ -1,0 +1,15 @@
+artifact_uri: file:///c:/Assessments/final_project/Data_Science/mlruns/140846681390198027/72485f73e4774635960aee5cc9c1a35e/artifacts
+end_time: 1730098744393
+entry_point_name: ''
+experiment_id: '140846681390198027'
+lifecycle_stage: active
+run_id: 72485f73e4774635960aee5cc9c1a35e
+run_name: Random Forest Classifier
+run_uuid: 72485f73e4774635960aee5cc9c1a35e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1730098736759
+status: 3
+tags: []
+user_id: VaibhavAgarwal

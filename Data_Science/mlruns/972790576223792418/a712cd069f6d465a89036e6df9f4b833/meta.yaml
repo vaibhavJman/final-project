@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/972790576223792418/a712cd069f6d465a89036e6df9f4b833/artifacts
+end_time: 1730091890849
+entry_point_name: ''
+experiment_id: '972790576223792418'
+lifecycle_stage: active
+run_id: a712cd069f6d465a89036e6df9f4b833
+run_name: dashing-fox-708
+run_uuid: a712cd069f6d465a89036e6df9f4b833
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1730091875417
+status: 3
+tags: []
+user_id: VaibhavAgarwal
