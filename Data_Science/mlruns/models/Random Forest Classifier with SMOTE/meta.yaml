@@ -1,0 +1,8 @@
+aliases:
+  challenger: '1'
+creation_timestamp: 1730117914952
+description: 'This is model is trained on Oversampled data/
+
+  SMOTE techniques'
+last_updated_timestamp: 1730118060559
+name: Random Forest Classifier with SMOTE

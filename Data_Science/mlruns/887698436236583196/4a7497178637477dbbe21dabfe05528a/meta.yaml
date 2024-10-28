@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/887698436236583196/4a7497178637477dbbe21dabfe05528a/artifacts
+deleted_time: 1730115698314
+end_time: 1730115651205
+entry_point_name: ''
+experiment_id: '887698436236583196'
+lifecycle_stage: deleted
+run_id: 4a7497178637477dbbe21dabfe05528a
+run_name: Logistic Regression Model with StandardScaler
+run_uuid: 4a7497178637477dbbe21dabfe05528a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1730115644068
+status: 3
+tags: []
+user_id: VaibhavAgarwal

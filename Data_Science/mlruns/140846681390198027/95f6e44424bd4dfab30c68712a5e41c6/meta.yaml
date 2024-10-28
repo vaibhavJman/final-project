@@ -1,0 +1,15 @@
+artifact_uri: file:///c:/Assessments/final_project/Data_Science/mlruns/140846681390198027/95f6e44424bd4dfab30c68712a5e41c6/artifacts
+end_time: 1730116673998
+entry_point_name: ''
+experiment_id: '140846681390198027'
+lifecycle_stage: active
+run_id: 95f6e44424bd4dfab30c68712a5e41c6
+run_name: Random Forest Classifier with SMOTE
+run_uuid: 95f6e44424bd4dfab30c68712a5e41c6
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1730116662535
+status: 3
+tags: []
+user_id: VaibhavAgarwal
